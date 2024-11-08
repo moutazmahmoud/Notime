@@ -1,0 +1,51 @@
+# Root-level ignores
+
+# Node dependencies and logs
+**/node_modules
+**/logs
+*.log
+
+# macOS system files
+.DS_Store
+
+# Expo project files and builds
+.expo/
+dist/
+web-build/
+
+# Native and generated files
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro cache
+.metro-health-check*
+
+# Debug files
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Environment variables
+.env*.local
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Expo CLI generated files
+expo-env.d.ts
+# @generated expo-cli sync-2b81b286409207a5da26e14c78851eb30d8ccbdb
+
+# Additional client-specific ignores
+client/node_modules/
+client/.expo/
+client/dist/
+client/web-build/
+
+# Additional server-specific ignores
+server/node_modules/
+server/dist/
+server/logs/
