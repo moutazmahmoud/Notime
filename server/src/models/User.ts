@@ -7,6 +7,7 @@ interface UserDocument extends Document {
   password: string; // Store hashed password
   email: string;
   role: 'admin' | 'customer'; // Define user roles
+  ordersHistory: []
 }
 
 const UserSchema = new Schema({

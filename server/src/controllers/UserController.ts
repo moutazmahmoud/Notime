@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
-import User from '../models/User';
-import bcrypt from 'bcrypt'; // Import bcrypt for hashing
+import { Request, RequestHandler, Response } from "express";
+import User from "../models/User";
+import bcrypt from "bcrypt"; // Import bcrypt for hashing
+import jwt from "jsonwebtoken"; // Import jwt for token generation
 
 // Get all users (Admin-only functionality)
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -8,10 +9,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve users', error });
+    res.status(500).json({ message: "Failed to retrieve users", error });
   }
 };
-
 
 // Register new user
 export const registerUser = async (req: Request, res: Response) => {
@@ -25,38 +25,55 @@ export const registerUser = async (req: Request, res: Response) => {
       username,
       password: hashedPassword,
       email,
-      role: 'customer', // default role
+      role: "customer", // default role
     });
 
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to register user', error });
+    res.status(400).json({ message: "Failed to register user", error });
   }
 };
 
-// Login user
-export const loginUser = async (req: Request, res: Response): Promise<Response> => {
+export const loginUser: RequestHandler = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    // Find user by username
-    const user = await User.findOne({ username });
+    // Find user by email
+    const user = await User.findOne({ email });
 
     // Check if user exists
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
+      return; // End the function early to avoid further code execution
     }
 
     // Check if password matches
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: 'Incorrect password' });
+      res.status(401).json({ message: "Incorrect password" });
+      return;
     }
 
-    // Return user details on successful login
-    return res.status(200).json(user);
+    // Generate a JWT token
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1h" }
+    );
+
+    // Send the response
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to authenticate user', error });
+    res.status(500).json({ message: "Failed to authenticate user", error });
   }
 };

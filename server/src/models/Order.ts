@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { Item } from './Item';
+import  Item  from './MenuItem';
 
 interface Order extends Document {
   items: mongoose.Types.ObjectId[]; // References to Item documents

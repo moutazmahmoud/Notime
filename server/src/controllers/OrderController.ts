@@ -20,7 +20,7 @@ export const addOrder = async (req: AddOrderRequest, res: Response, next: NextFu
 };
 
 // Get all orders
-export const getorders = async (req: Request, res: Response) => {
+export const getorders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orders = await Order.find();
     res.status(200).json(orders);

@@ -1,7 +1,6 @@
-// router file
-import express, { Response, NextFunction } from 'express';
+
+import express from 'express';
 import { getAllUsers, loginUser, registerUser } from '../controllers/UserController';
-import { authToken } from '../middlewares/authToken';
 
 const router = express.Router();
 
@@ -14,6 +13,5 @@ router.post('/login', loginUser);
 
 // Admin-only
 router.get('/all', getAllUsers);
-
 
 export default router;
