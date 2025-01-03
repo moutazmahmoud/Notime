@@ -26,7 +26,7 @@ mongoose
 // app.use(express.json());
 
 app.use("/orders", ordersRouter);
-app.use("/users", usersRouter);
+app.use("/auth", usersRouter);
 app.use("/menu-items", menuItemsRouter);
 app.use("/location", locationRouter);
 app.use("/category", categoryRouter);

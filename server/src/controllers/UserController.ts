@@ -14,10 +14,22 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 // Register new user
-export const registerUser = async (req: Request, res: Response) => {
-  try {
-    const { username, password, email } = req.body;
+export const registerUser: RequestHandler = async (req, res) => {
+  const { username, password, email } = req.body;
 
+  // Validate request body
+  if (!username || !email || !password) {
+    res.status(400).json({ message: "Missing required fields" });
+    return;
+  }
+
+  // check if user already exists
+  const user = await User.findOne({ email });
+  if (user) {
+    res.status(400).json({ message: "User already exists" });
+    return;
+  }
+  try {
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -31,6 +43,7 @@ export const registerUser = async (req: Request, res: Response) => {
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
+    console.error("Error:", error);
     res.status(400).json({ message: "Failed to register user", error });
   }
 };

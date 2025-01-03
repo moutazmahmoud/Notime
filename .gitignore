@@ -49,3 +49,5 @@ client/web-build/
 server/node_modules/
 server/dist/
 server/logs/
+
+.vscode
