@@ -1,21 +1,33 @@
 import { View, Text } from "react-native";
 import { ExternalLink } from "@/components/ExternalLink";
+import SearchBar from "@/components/Searchbar";
+import { useState } from "react";
 
 export default function TabOneScreen() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+    console.log("Search Query:", text); // Replace with actual search logic
+  };
   return (
-    <View className="flex-1 items-center justify-center bg-white dark:bg-black">
-      <Text className="text-xl font-bold text-dark dark:text-white">Home</Text>
-      <Text className="text-xs font-mono text-dark dark:text-white mt-4">
-        Text with custom font (SpaceMono x NativeWind)
-      </Text>
-      <View className="h-[1px] w-4/5 my-8 bg-[#eee] dark:bg-zinc-900" />
-      <View className="mt-2 mx-5 items-center">
-        <ExternalLink href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
-          <Text className="text-center text-blue-500 dark:text-white">
-            Tap here if your app doesn't automatically update after making
-            changes
-          </Text>
-        </ExternalLink>
+    <View className="flex-1 bg-white dark:bg-black inset-0 bg-blue px-4 flex-col">
+      <View className="items-center space-between flex-row w-full justify-between mt-6">
+        <Text className="text-xl font-bold text-dark dark:text-white">
+          Notime
+        </Text>
+        <View className="rounded-full w-6 h-6 bg-black"></View>
+      </View>
+      <View className="mt-4 text-xl">
+        <Text>Find the best</Text>
+        <Text>Coffee for you</Text>
+      </View>
+      <View className="mt-4">
+        <SearchBar
+          placeholder="Search for items"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
       </View>
     </View>
   );

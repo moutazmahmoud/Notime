@@ -1,17 +1,34 @@
-import { useColorScheme } from "nativewind";
-
+import React from "react";
+import { View, Text, Pressable } from "react-native";
 import { Link, Tabs } from "expo-router";
+import { useColorScheme } from "nativewind";
 import Colors from "@/constants/Colors";
-
-import { Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof AntDesign>["name"];
   color: string;
+  label: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return (
+    <View
+      style={{
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "center",
+        marginTop: 0,
+        gap: 5,
+        flex: 1,
+      }}
+    >
+      <AntDesign name={props.name} size={20} color={props.color} />
+      <Text style={{ fontSize: 12, color: props.color, whiteSpace: "nowrap" }}>
+        {props.label}
+      </Text>
+    </View>
+  );
 }
 
 export default function TabLayout() {
@@ -21,17 +38,31 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
+        tabBarInactiveTintColor: "#A3A3A3",
+        tabBarStyle: {
+          backgroundColor: "#1E293B",
+          bottom: 20,
+          borderTopWidth: 0,
+          marginHorizontal: 16,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderRadius: 35,
+          position: "absolute",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          height: 60,
+        },
         headerShown: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          href: null,
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="home" color={color} label="Home" />
+          ),
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -48,13 +79,64 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
+        name="orders"
+        options={{
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="profile" color={color} label="My Orders" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="menu"
+        options={{
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="menu-book" color={color} label="Menu" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="register"
+        options={{
+          title: "",
+          href: null,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="adduser" color={color} label="Sign Up" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="user" color={color} label="Profile" />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="login"
+        options={{
+          title: "",
+          href: null,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="adduser" color={color} label="Sign Up" />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+          title: "",
+          href: null,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="" color={color} label="" />
+          ),
         }}
-      /> */}
+      />
     </Tabs>
   );
 }
