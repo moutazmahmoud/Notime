@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, Alert } from "react-native";
 import { register } from "../../services/authService";
 import { useNavigation } from "@react-navigation/native";
-import router from 'expo-router';
+import {router} from 'expo-router';
 
 const Register = () => {
   const [username, setName] = useState("");
@@ -18,7 +18,7 @@ const Register = () => {
       const userData  = await res
       Alert.alert("Registration Successful", `Welcome ${username}`);
       console.log(userData);
-      // router.replace('/login');
+      router.replace('/login');
 
       console.log("registration successful");
       console.log(userData);

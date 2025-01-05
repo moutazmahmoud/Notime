@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, Alert } from "react-native";
 import { login } from "../../services/authService";
+import {router} from 'expo-router';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const Login = () => {
     try {
       const userData = await login(email, password);
       Alert.alert("Login Successful", `Welcome ${userData.name}`);
+      router.replace('/home');
       console.log("login successful");
     } catch (error) {
       Alert.alert("Error", error?.message);
