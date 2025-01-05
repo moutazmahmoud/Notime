@@ -15,8 +15,9 @@ const Register = () => {
     setLoading(true);
     try {
       const res = await register(username, email, password);
-      const userData  = res.json()
+      const userData  = await res
       Alert.alert("Registration Successful", `Welcome ${username}`);
+      console.log(userData);
       // router.replace('/login');
 
       console.log("registration successful");
