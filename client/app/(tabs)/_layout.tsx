@@ -45,7 +45,7 @@ export default function TabLayout() {
           borderTopWidth: 0,
           marginHorizontal: 16,
           elevation: 0,
-          shadowOpacity: 0,
+          // shadowOpacity: 0,
           borderRadius: 35,
           position: "absolute",
           flexDirection: "row",
@@ -93,18 +93,16 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="menu-book" color={color} label="Menu" />
+            <TabBarIcon name="menu" color={color} label="Menu" />
           ),
         }}
       />
       <Tabs.Screen
         name="register"
         options={{
+          tabBarStyle: { display: "none" },
           title: "",
           href: null,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="adduser" color={color} label="Sign Up" />
-          ),
         }}
       />
       <Tabs.Screen
@@ -120,11 +118,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="login"
         options={{
+          tabBarStyle: { display: "none" },
           title: "",
           href: null,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="adduser" color={color} label="Sign Up" />
-          ),
+        }}
+      />
+      <Tabs.Screen
+        name="forgot-password"
+        options={{
+          tabBarStyle: { display: "none" },
+          title: "",
+          href: null,
         }}
       />
       <Tabs.Screen

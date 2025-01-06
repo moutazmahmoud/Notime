@@ -15,10 +15,10 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 // Register new user
 export const registerUser: RequestHandler = async (req, res) => {
-  const { username, password, email } = req.body;
+  const { username, password, email, phonenumber } = req.body;
 
   // Validate request body
-  if (!username || !email || !password) {
+  if (!username || !email || !password ) {
     res.status(400).json({ message: "Missing required fields" });
     return;
   }
@@ -37,6 +37,7 @@ export const registerUser: RequestHandler = async (req, res) => {
       username,
       password: hashedPassword,
       email,
+      phonenumber,
       role: "customer", // default role
     });
 

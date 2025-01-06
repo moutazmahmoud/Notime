@@ -2,6 +2,8 @@ import { View, Text } from "react-native";
 import { ExternalLink } from "@/components/ExternalLink";
 import SearchBar from "@/components/Searchbar";
 import { useState } from "react";
+import DrinksHomeView from "@/components/DrinksHomeList";
+import React from "react";
 
 export default function TabOneScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,6 +31,7 @@ export default function TabOneScreen() {
           onChangeText={handleSearch}
         />
       </View>
+      <DrinksHomeView />
     </View>
   );
 }

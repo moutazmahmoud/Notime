@@ -13,16 +13,14 @@ import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
 import { isValidEmail } from "@/lib/utils";
 
-const Login = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    // Check if any field is empty
-    if (!email || !password) {
-      Alert.alert("Missing Fields", "Please fill out all fields.");
-      console.log("Missing Fields");
+  const handleForgotPassword = async () => {
+    if (!email) {
+      Alert.alert("Missing Fields", "Please fill out this email field.");
+      console.log("Missing Fields email");
       return;
     }
 
@@ -35,10 +33,8 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const userData = await login(email, password);
-      Alert.alert("Login Successful", `Welcome ${userData.name}`);
-      router.replace("/"); // Redirect to home page
-      console.log("login successful");
+      // todo handle forgot password
+      console.log("Forgot Password ");
     } catch (error) {
       Alert.alert("Error", error?.message);
     } finally {
@@ -48,7 +44,11 @@ const Login = () => {
 
   return (
     <View className="bg-white flex-1 flex-col p-4">
-      <Text className="text-2xl text-center mt-10 text-bold">Login</Text>
+      <Text className="text-2xl  mt-10 text-bold">Forgot Password</Text>
+      <Text className="text-l mt-10" style={{ color: "#A3A3A3" }}>  
+        Enter the email address registered with your account. We'll send you a
+        link to reset your password.
+      </Text>
       <View className="flex-col mt-10 items-center justify-center">
         <LabeledTextInput
           label="Email"
@@ -56,30 +56,21 @@ const Login = () => {
           placeholder="Enter your email"
           onChangeText={setEmail}
         />
-        <LabeledTextInput
-          label="Password"
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={setPassword}
-          isShowingForgotPassword={true}
-          styleClasses="m-6"
-          secureTextEntry={true}
-        />
         <TouchableOpacity
-          className="w-full mt-6 rounded-lg bg-primary-10"
-          onPress={handleLogin}
+          className="w-full mt-10 rounded-lg bg-primary-10"
+          onPress={handleForgotPassword}
         >
           <Text className="w-full text-center px-2 py-2 rounded-2 text-white">
-            {loading ? "Loading..." : "Login"}
+            {loading ? "Loading..." : "Send Email"}
           </Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center mt-6">
-          <Text className="">Don't have an account?</Text>
+        <View className="flex-row justify-center mt-4">
+          <Text className="">Remembered password? </Text>
           <TouchableOpacity
             className="text-primary"
-            onPress={() => router.push("/register")}
+            onPress={() => router.push("/login")}
           >
-            <Text className="text-primary-10"> Sign up here</Text>
+            <Text className="text-primary-10">Login to your account</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -87,4 +78,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
