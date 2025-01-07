@@ -14,7 +14,7 @@ import { authorizeRole } from "../middlewares/authorizeRole";
 const router = express.Router();
 
 // Route to create a new menu item (only accessible by admins)
-router.post("/create", createMenuItem);
+router.post("/create", authToken, authorizeAdmin ,createMenuItem);
 
 // Route to get all menu items (can filter by category if provided)
 router.get("/", getMenuItems);

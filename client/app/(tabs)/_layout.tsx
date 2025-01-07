@@ -122,7 +122,15 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarIcon: ({ color }) => (
-           <View style={{alignItems: "center", flexDirection: "column", justifyContent: "center", marginTop: 0, flex: 1}}>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                marginTop: 0,
+                flex: 1,
+              }}
+            >
               <Ionicons name="notifications" size={20} color={color} />
             </View>
           ),
@@ -146,6 +154,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          tabBarStyle: { display: "none" },
+
           title: "",
           href: null,
         }}

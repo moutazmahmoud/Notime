@@ -27,7 +27,7 @@ mongoose
 
 app.use("/orders", ordersRouter);
 app.use("/auth", usersRouter);
-app.use("/menu-items", menuItemsRouter);
+app.use("/menu-item", menuItemsRouter);
 app.use("/location", locationRouter);
 app.use("/category", categoryRouter);
 
