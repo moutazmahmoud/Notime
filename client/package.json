@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "bun run expo start",
-    "android": "bun run expo start --android",
+    "android": "expo start --android",
     "ios": "bun run expo start --ios",
     "web": "expo start --web",
     "test": "bun run jest --watchAll",

@@ -26,7 +26,7 @@ export default function DrinksHomeView() {
   );
 
   return (
-    <View style={styles.container} className="max-h-20">
+    <View style={styles.container} className="">
       <Text style={styles.title}>Popular Drinks</Text>
       <FlatList
         data={drinks}
@@ -42,7 +42,7 @@ export default function DrinksHomeView() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F8F8F8",
+    backgroundColor: "black",
     paddingTop: 16,
   },
   title: {

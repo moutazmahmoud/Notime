@@ -6,6 +6,7 @@ import Colors from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof AntDesign>["name"];
@@ -19,14 +20,14 @@ function TabBarIcon(props: {
         flexDirection: "column",
         justifyContent: "center",
         marginTop: 0,
-        gap: 5,
+        // gap: 5,
         flex: 1,
       }}
     >
       <AntDesign name={props.name} size={20} color={props.color} />
-      <Text style={{ fontSize: 12, color: props.color, whiteSpace: "nowrap" }}>
+      {/* <Text style={{ fontSize: 12, color: props.color, whiteSpace: "nowrap" }}>
         {props.label}
-      </Text>
+      </Text> */}
     </View>
   );
 }
@@ -40,18 +41,26 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarInactiveTintColor: "#A3A3A3",
         tabBarStyle: {
-          backgroundColor: "#1E293B",
+          backgroundColor: "white",
+          // boxShadow: "0px 0px 16px 0px rgba(45, 49, 54, 0.13)",
           bottom: 20,
           borderTopWidth: 0,
           marginHorizontal: 16,
-          elevation: 0,
           // shadowOpacity: 0,
-          borderRadius: 35,
+          borderRadius: 16,
           position: "absolute",
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
           height: 60,
+          paddingHorizontal: 16,
+          // iOS shadow properties
+          shadowColor: "rgba(45, 49, 54, 0.13)",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 1,
+          shadowRadius: 16, // Equivalent to the blur radius in CSS
+          // Android shadow property
+          elevation: 16, // Mimics shadow intensity
         },
         headerShown: false,
       }}
@@ -89,12 +98,41 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="menu"
+        name="favorites"
         options={{
           title: "",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="menu" color={color} label="Menu" />
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                marginTop: 0,
+                // gap: 5,
+                flex: 1,
+              }}
+            >
+              <MaterialIcons name="favorite" size={20} color={color} />
+            </View>
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: "",
+          tabBarIcon: ({ color }) => (
+           <View style={{alignItems: "center", flexDirection: "column", justifyContent: "center", marginTop: 0, flex: 1}}>
+              <Ionicons name="notifications" size={20} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="menu"
+        options={{
+          title: "",
+          href: null,
         }}
       />
       <Tabs.Screen
@@ -109,9 +147,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="user" color={color} label="Profile" />
-          ),
+          href: null,
         }}
       />
 
