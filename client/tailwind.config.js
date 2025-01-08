@@ -17,6 +17,8 @@ module.exports = {
         dropShadowLight: "drop-shadow(0 1px 1px rgb(0 0 0 / 1))",
       },
       colors: {
+        textPrimary: #1a1a1a,
+        textSecondary: "#b3b3c0",
         border: "#1a332a",
         input: "#243f34",
         ring: "#274b36",
@@ -29,7 +31,7 @@ module.exports = {
           '31': '#073763',
           '32': '#091a2b',
           '34': '#0a213c',
-          '35': '#196683',
+          '35': 'rgb(249, 249, 249)',
           '36': '#011f4b',
           '40': '#97CBDC',
           '60': '#DEE8F1',

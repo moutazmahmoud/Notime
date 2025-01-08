@@ -3,6 +3,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AvatarKey } from "@/lib/utils";
 import { MenuItem } from "@/app/(tabs)/menu";
 
+interface CartItem extends MenuItem {
+  quantity: number;
+}
+
 interface UserContextType {
   username: string;
   userEmail: string;
@@ -11,7 +15,12 @@ interface UserContextType {
   token: string;
   role: string;
   userId: string;
+  cart: CartItem[];
   setUser: (user: Partial<UserContextType>) => void;
+  addToCart: (item: MenuItem, quantity?: number) => void;
+  removeFromCart: (id: string) => void;
+  updateCartItemQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
   logout: () => void;
 }
 
@@ -30,20 +39,62 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     menuItems: [],
   });
 
-// Save user to AsyncStorage and context
-const setUser = (newUser: Partial<UserContextType>) => {
-  setUserState((prev) => {
-    const updatedUser = { ...prev, ...newUser };
+  // Save user to AsyncStorage and context
+  const setUser = (newUser: Partial<UserContextType>) => {
+    setUserState((prev) => {
+      const updatedUser = { ...prev, ...newUser };
 
-    // Save updated user data to AsyncStorage
-    AsyncStorage.setItem("userData", JSON.stringify(updatedUser))
-      .then(() => console.log("User data saved to AsyncStorage:", updatedUser))
-      .catch((error) => console.error("Failed to save user data:", error));
+      // Save updated user data to AsyncStorage
+      AsyncStorage.setItem("userData", JSON.stringify(updatedUser))
+        .then(() =>
+          console.log("User data saved to AsyncStorage:", updatedUser)
+        )
+        .catch((error) => console.error("Failed to save user data:", error));
 
-    return updatedUser;
-  });
-};
+      return updatedUser;
+    });
+  };
 
+  // Add item to cart
+  const addToCart = (item: MenuItem, quantity: number = 1) => {
+    setUser((prevUser) => {
+      const cart = prevUser.cart || [];
+      const existingItem = cart.find((cartItem) => cartItem._id === item._id);
+
+      const updatedCart = existingItem
+        ? cart.map((cartItem) =>
+            cartItem._id === item._id
+              ? { ...cartItem, quantity: cartItem.quantity + quantity }
+              : cartItem
+          )
+        : [...cart, { ...item, quantity }];
+
+      return { ...prevUser, cart: updatedCart };
+    });
+  };
+
+  // Remove item from cart
+  const removeFromCart = (id: string) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      cart: prevUser.cart?.filter((item) => item._id !== id) || [],
+    }));
+  };
+
+  // Update cart item quantity
+  const updateCartItemQuantity = (id: string, quantity: number) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      cart: prevUser.cart?.map((item) =>
+        item._id === id ? { ...item, quantity } : item
+      ),
+    }));
+  };
+
+  // Clear the cart
+  const clearCart = () => {
+    setUser((prevUser) => ({ ...prevUser, cart: [] }));
+  };
 
   // Logout user
   const logout = async () => {
@@ -56,6 +107,7 @@ const setUser = (newUser: Partial<UserContextType>) => {
       userEmail: "",
       userId: "",
       menuItems: [],
+      cart: [],
     });
   };
 
@@ -71,7 +123,17 @@ const setUser = (newUser: Partial<UserContextType>) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ ...user, setUser, logout }}>
+    <UserContext.Provider
+      value={{
+        ...user,
+        setUser,
+        addToCart,
+        removeFromCart,
+        updateCartItemQuantity,
+        clearCart,
+        logout,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

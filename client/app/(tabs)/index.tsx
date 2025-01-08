@@ -7,6 +7,7 @@ import { useState } from "react";
 import { getImageForValue, AvatarKey } from "@/lib/utils";
 import { router } from "expo-router";
 import { getMenuItems } from "@/services/menuItemsService";
+import DrinksByCategoryView from "@/components/DrinksByCategoryView";
 
 export default function HomeScreen() {
   const { username, systemAvatar, menuItems, setUser, token } = useUser(); // Access username and systemAvatar using the hook
@@ -25,7 +26,6 @@ export default function HomeScreen() {
         console.log("items:", items);
         setUser({ menuItems: items });
         console.log("items: from home", items);
-        console.log("items[0].id:", items[0].id);
       } catch (err) {
         setError("Failed to fetch menu items.");
       } finally {
@@ -59,8 +59,8 @@ export default function HomeScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white dark:bg-black inset-0 bg-blue px-4 flex-col">
-      <ScrollView>
+    <View className="flex-1 bg-primary-35 dark:bg-black inset-0 bg-blue px-4 flex-col mb-10" >
+      <ScrollView style={{ marginBottom: 100 }}>
         {/* Header */}
         <View className="items-center space-between flex-row w-full justify-between mt-6">
           <Text className="text-xl font-bold text-dark dark:text-white">
@@ -71,7 +71,7 @@ export default function HomeScreen() {
             <Image
               source={getImageForValue(avatarKey)} // Use the provided avatar key or default to "10"
               className="rounded-full w-5 h-5"
-              style={{ width: 50, height: 50 }}
+              style={{ width: 40, height: 40 }}
             />
           </TouchableOpacity>
         </View>
@@ -92,7 +92,8 @@ export default function HomeScreen() {
         </View>
 
         {/* Drinks Section */}
-        <DrinksHomeView items={menuItems} />
+        <DrinksHomeView items={menuItems} title="Popular Drinks" classes="mt-6" />
+        <DrinksByCategoryView items={menuItems} />
       </ScrollView>
     </View>
   );

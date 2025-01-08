@@ -178,6 +178,15 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="cart"
+        options={{
+          tabBarStyle: { display: "none" },
+
+          title: "",
+          href: null,
+        }}
+      />
 
       <Tabs.Screen
         name="login"
@@ -208,9 +217,6 @@ export default function TabLayout() {
         options={{
           title: "",
           href: null,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="" color={color} label="" />
-          ),
         }}
       />
     </Tabs>
