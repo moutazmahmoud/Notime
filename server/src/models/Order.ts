@@ -1,15 +1,23 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 interface Order extends Document {
-  items: mongoose.Types.ObjectId[]; // References to Item documents
+  items: Array<{
+    item: mongoose.Types.ObjectId; // Reference to the MenuItem model
+    quantity: number; // Quantity of the menu item
+  }>;
   totalPrice: number;
   customerNotes?: string;
 }
 
 const orderSchema = new Schema<Order>({
-  items: [{ type: Schema.Types.ObjectId, ref: 'MenuItem', required: true }],
+  items: [
+    {
+      item: { type: Schema.Types.ObjectId, ref: "MenuItem", required: true },
+      quantity: { type: Number, required: true, default: 1 }, // Default quantity is 1
+    },
+  ],
   totalPrice: { type: Number, required: true },
-  customerNotes: { type: String },
+  customerNotes: { type: String, default: '' }, // Optional notes from the customer
 });
 
-export default mongoose.model<Order>('Order', orderSchema);
+export default mongoose.model<Order>("Order", orderSchema);

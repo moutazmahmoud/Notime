@@ -7,6 +7,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useUser } from "../../context/UserContext"; // Import the user context
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof AntDesign>["name"];
@@ -34,6 +35,8 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
+  const { role } = useUser(); // Access username and systemAvatar using the hook
+  console.log("role:", role);
 
   return (
     <Tabs
@@ -101,6 +104,7 @@ export default function TabLayout() {
         name="favorites"
         options={{
           title: "",
+          href: role === "customer" ? "/favorites" : null, // Only add href for customer
           tabBarIcon: ({ color }) => (
             <View
               style={{
@@ -140,7 +144,21 @@ export default function TabLayout() {
         name="menu"
         options={{
           title: "",
-          href: null,
+          href: role === "Admin" ? "/menu" : null, // Only add href for admins
+          tabBarIcon: ({ color }) => (
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                marginTop: 0,
+                // gap: 5,
+                flex: 1,
+              }}
+            >
+              <MaterialIcons name="menu" size={20} color={color} />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
@@ -163,6 +181,14 @@ export default function TabLayout() {
 
       <Tabs.Screen
         name="login"
+        options={{
+          tabBarStyle: { display: "none" },
+          title: "",
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="add-menu-item"
         options={{
           tabBarStyle: { display: "none" },
           title: "",

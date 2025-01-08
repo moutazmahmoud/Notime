@@ -110,7 +110,7 @@ const Register = () => {
         <LabeledTextInput
           label="Confirm Password"
           value={confirmPassword}
-          placeholder="Enter your password"
+          placeholder="Confirm your password"
           onChangeText={setConfirmPassword}
           secureTextEntry={true}
           styleClasses="m-4"

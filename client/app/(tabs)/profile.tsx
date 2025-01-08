@@ -14,6 +14,7 @@ import { getImageForValue, AvatarKey } from "@/lib/utils";
 import { useRouter } from "expo-router";
 import { useUser } from "../../context/UserContext";
 import { editUser, deleteUser } from "@/services/authService";
+import { AntDesign } from "@expo/vector-icons";
 
 const avatarKeys: AvatarKey[] = [
   "10",
@@ -119,15 +120,14 @@ const ProfileScreen: React.FC = () => {
     <View style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>Back</Text>
+        <Text style={styles.backButtonText}>
+          <AntDesign name="left" size={20} color="#fff" />
+        </Text>
       </TouchableOpacity>
 
       {/* User Avatar */}
       <TouchableOpacity onPress={() => setAvatarModalVisible(true)}>
-        <Image
-          source={getImageForValue(selectedAvatar)}
-          style={styles.avatar}
-        />
+        <Image source={getImageForValue(systemAvatar)} style={styles.avatar} />
       </TouchableOpacity>
 
       {/* User Details */}
@@ -193,19 +193,37 @@ const ProfileScreen: React.FC = () => {
         animationType="slide"
       >
         <View style={styles.modalContainer}>
-          <FlatList
-            data={avatarKeys}
-            renderItem={renderAvatarItem}
-            keyExtractor={(item) => item}
-            numColumns={3}
-            contentContainerStyle={styles.avatarList}
-          />
-          <TouchableOpacity
-            style={styles.modalCloseButton}
-            onPress={() => setAvatarModalVisible(false)}
-          >
-            <Text style={styles.buttonText}>Done</Text>
-          </TouchableOpacity>
+          <View className="bg-white rounded-lg p-4" style={{ maxWidth: "86%" }}>
+            <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-xl text-bold text-black">
+                Select Avatar
+              </Text>
+              <TouchableOpacity
+                className=""
+                onPress={() => setAvatarModalVisible(false)}
+              >
+                <AntDesign name="close" size={20} color="#000" />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={avatarKeys}
+              renderItem={renderAvatarItem}
+              keyExtractor={(item) => item}
+              numColumns={4}
+              contentContainerStyle={styles.avatarList}
+            />
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => {
+                setAvatarModalVisible(false);
+                handleSave();
+              }}
+            >
+              <Text style={styles.buttonText} className="text-center">
+                Save Changes
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </View>
@@ -286,14 +304,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatarOption: {
-    width: 80,
-    height: 80,
+    width: 48,
+    height: 48,
     margin: 10,
     borderRadius: 40,
   },
   selectedAvatar: {
-    borderWidth: 3,
+    borderWidth: 4,
     borderColor: "#6200EE",
+    backgroundColor: "#6200EE",
   },
   modalCloseButton: {
     marginTop: 20,

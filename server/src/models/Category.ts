@@ -1,4 +1,3 @@
-// category.model.ts
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface Category extends Document {
@@ -6,9 +5,9 @@ interface Category extends Document {
   description: string;
 }
 
-const categorySchema = new Schema({
+const categorySchema = new Schema<Category>({
   name: { type: String, required: true },
-  description: String,
+  description: { type: String, default: '' }, // Default to an empty string if no description is provided
 });
 
 export default mongoose.model<Category>('Category', categorySchema);

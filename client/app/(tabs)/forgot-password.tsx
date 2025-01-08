@@ -12,6 +12,7 @@ import { login } from "../../services/authService";
 import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
 import { isValidEmail } from "@/lib/utils";
+import { AntDesign } from "@expo/vector-icons";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -44,8 +45,14 @@ const ForgotPassword = () => {
 
   return (
     <View className="bg-white flex-1 flex-col p-4">
+      <TouchableOpacity
+        onPress={() => router.back()}
+        className="bg-primary-10 p-4 rounded-lg w-10 h-10 flex-row justify-center items-center"
+      >
+        <AntDesign name="left" size={20} color="#fff" />
+      </TouchableOpacity>
       <Text className="text-2xl  mt-10 text-bold">Forgot Password</Text>
-      <Text className="text-l mt-10" style={{ color: "#A3A3A3" }}>  
+      <Text className="text-l mt-10" style={{ color: "#A3A3A3" }}>
         Enter the email address registered with your account. We'll send you a
         link to reset your password.
       </Text>
