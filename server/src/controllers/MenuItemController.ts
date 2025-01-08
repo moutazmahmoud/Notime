@@ -7,6 +7,37 @@ import multer from "multer";
 import path from "path";
 import * as fs from "fs";
 
+// Helper function to parse and validate customizations
+const parseCustomizations = (customizations: string): string[] => {
+  let parsedCustomizations: string[] = [];
+
+  if (!customizations || customizations.trim() === "") {
+    return [];
+  }
+
+  try {
+    parsedCustomizations = JSON.parse(customizations);
+
+    if (!Array.isArray(parsedCustomizations)) {
+      throw new Error("Customizations must be an array.");
+    }
+
+    parsedCustomizations.forEach((id) => {
+      if (!isValidObjectId(id)) {
+        throw new Error(`Invalid customization ID: ${id}`);
+      }
+    });
+
+    return parsedCustomizations;
+  } catch (error) {
+    throw new Error(
+      `Invalid customizations format. ${
+         "Must be a JSON array of valid IDs."
+      }`
+    );
+  }
+};
+
 // Helper function to validate ObjectId
 const isValidObjectId = (id: string): boolean =>
   mongoose.Types.ObjectId.isValid(id);
@@ -31,6 +62,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Create a new menu item
 export const createMenuItem: RequestHandler = async (
   req,
   res,
@@ -63,14 +95,6 @@ export const createMenuItem: RequestHandler = async (
     return;
   }
 
-  if (!image) {
-    console.error("Step 4: Missing image");
-    res.status(400).json({
-      message: "Image is required for menu item.",
-    });
-    return;
-  }
-
   try {
     // Find or create category based on the name
     console.log("Step 5: Searching for category:", category);
@@ -87,11 +111,14 @@ export const createMenuItem: RequestHandler = async (
       console.log("Step 8: Created new category:", foundCategory);
     }
 
-    // Handle image URL
-    const imageUrl = `/uploads/${image.filename}`;
-    console.log("Step 9: Image URL generated:", imageUrl);
+    // Handle image URL (only if image is present)
+    let imageUrl = "";
+    if (image) {
+      imageUrl = `/uploads/${image.filename}`;
+      console.log("Step 9: Image URL generated:", imageUrl);
+    }
 
-    let parsedCustomizations: string[];
+    let parsedCustomizations = parseCustomizations(customizations);
     try {
       console.log("Step 10: Raw customizations:", customizations); // Log raw customizations value
 
@@ -144,7 +171,7 @@ export const createMenuItem: RequestHandler = async (
       },
       basePrice,
       customizations: customizationIds,
-      image: imageUrl, // Save image URL to menu item
+      image: imageUrl, // Save image URL to menu item (empty string if no image)
     });
 
     console.log("Step 13: Creating menu item:", newMenuItem);
@@ -245,6 +272,8 @@ export const updateMenuItem: RequestHandler = async (
   }
 
   try {
+    let parsedCustomizations = parseCustomizations(customizations);
+
     // If categoryName is provided, find the corresponding Category document
     let foundCategory = null;
     if (categoryName) {
@@ -266,7 +295,7 @@ export const updateMenuItem: RequestHandler = async (
         ? { id: foundCategory._id, name: foundCategory.name }
         : undefined,
       basePrice,
-      customizations,
+      customizations: parsedCustomizations,
     };
 
     // If a new image is uploaded, add it to the updated data
@@ -319,47 +348,6 @@ export const deleteMenuItem: RequestHandler = async (
     res.status(200).json({ message: "Menu item deleted successfully." });
   } catch (error) {
     console.error("Error deleting menu item:", error);
-    next(error);
-  }
-};
-
-// Add a new CustomizationOption to a MenuItem
-export const addCustomizationToMenuItem: RequestHandler = async (
-  req,
-  res,
-  next
-): Promise<void> => {
-  const { menuItemId, customizationId } = req.body;
-
-  console.log("Adding customization to menu item:", {
-    menuItemId,
-    customizationId,
-  });
-
-  if (!isValidObjectId(menuItemId) || !isValidObjectId(customizationId)) {
-    res.status(400).json({ message: "Invalid IDs provided." });
-    return;
-  }
-
-  try {
-    const menuItem = await MenuItem.findById(menuItemId);
-    if (!menuItem) {
-      res.status(404).json({ message: "Menu item not found." });
-      return;
-    }
-
-    if (menuItem.customizations.includes(customizationId)) {
-      res.status(400).json({ message: "Customization already added." });
-      return;
-    }
-
-    menuItem.customizations.push(customizationId);
-    await menuItem.save();
-
-    console.log("Customization added:", menuItem);
-    res.status(200).json(menuItem);
-  } catch (error) {
-    console.error("Error adding customization to menu item:", error);
     next(error);
   }
 };

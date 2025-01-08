@@ -5,7 +5,6 @@ import {
   getMenuItemById,
   updateMenuItem,
   deleteMenuItem,
-  addCustomizationToMenuItem,
 } from "../controllers/MenuItemController";
 import { authToken } from "../middlewares/authToken";
 import { authorizeAdmin } from "../middlewares/authorizeAdmin";
@@ -40,14 +39,7 @@ router.get("/:id", getMenuItemById);
 router.put("/:id", upload.single("image"), updateMenuItem); // Use multer middleware here
 
 // Route to delete a menu item (only accessible by admins)
-router.delete("/:id", authToken, authorizeAdmin, deleteMenuItem);
+router.delete("/:id", deleteMenuItem);
 
-// Route to add a customization to a menu item (only accessible by admins)
-router.post(
-  "/add-customization",
-  authToken,
-  authorizeAdmin,
-  addCustomizationToMenuItem
-);
 
 export default router;

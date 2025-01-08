@@ -44,7 +44,7 @@ const Login = () => {
         systemAvatar: user.systemAvatar,
         role: user.role,
         userEmail: user.email,
-        token,
+        token: token,
         userId: user.id,
       });
 

@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import CustomizationOption from './CustomizationOption';
+import CustomizationOption from "./CustomizationOption";
 
 interface MenuItem extends Document {
   name: string;
@@ -23,7 +23,7 @@ const menuItemSchema = new Schema<MenuItem>({
     name: { type: String, required: true }, // Embedded category name
   },
   basePrice: { type: Number, required: true },
-  image: { type: String, required: true },
+  image: { type: String },
   customizations: [
     {
       type: mongoose.Schema.Types.ObjectId,

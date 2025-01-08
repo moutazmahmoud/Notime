@@ -1,3 +1,4 @@
+import { MenuItem } from "@/app/(tabs)/menu";
 import React from "react";
 import {
   View,
@@ -8,30 +9,30 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const drinks = [
-  { id: "1", name: "Cappuccino", image: "https://via.placeholder.com/100" },
-  { id: "2", name: "Latte", image: "https://via.placeholder.com/100" },
-  { id: "3", name: "Espresso", image: "https://via.placeholder.com/100" },
-  { id: "4", name: "Mocha", image: "https://via.placeholder.com/100" },
-  { id: "5", name: "Iced Coffee", image: "https://via.placeholder.com/100" },
-  { id: "6", name: "Green Tea", image: "https://via.placeholder.com/100" },
-];
+export const API_URL = "http://192.168.1.101:4000";
 
-export default function DrinksHomeView() {
-  const renderDrinkItem = ({ item }: { item: (typeof drinks)[0] }) => (
-    <TouchableOpacity style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.name}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+
+export default function DrinksHomeView({ items }: { items: MenuItem[] }) {
+  console.log("items from flatlist view:", items);
+  const renderDrinkItem = ({ item }: { item: MenuItem }) => {
+    // Construct the full image URL
+    const imageUrl = `${API_URL}${item.image}`;
+
+    return (
+      <TouchableOpacity style={styles.card} key={item._id}>
+        <Image source={{ uri: imageUrl }} style={styles.image} />
+        <Text style={styles.name}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container} className="">
       <Text style={styles.title}>Popular Drinks</Text>
       <FlatList
-        data={drinks}
+        data={items}
         renderItem={renderDrinkItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.list}

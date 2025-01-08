@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AvatarKey } from "@/lib/utils";
+import { MenuItem } from "@/app/(tabs)/menu";
 
 interface UserContextType {
   username: string;
   userEmail: string;
   systemAvatar: AvatarKey;
+  menuItems: MenuItem[];
   token: string;
   role: string;
   userId: string;
@@ -25,6 +27,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     role: "",
     userEmail: "",
     userId: "",
+    menuItems: [],
   });
 
 // Save user to AsyncStorage and context
@@ -52,6 +55,7 @@ const setUser = (newUser: Partial<UserContextType>) => {
       role: "",
       userEmail: "",
       userId: "",
+      menuItems: [],
     });
   };
 

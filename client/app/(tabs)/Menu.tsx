@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ScrollView,
 } from "react-native";
 import {
   getMenuItems,
@@ -15,11 +16,12 @@ import {
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "expo-router";
 
-interface MenuItem {
+export interface MenuItem {
   _id: string;
   name: string;
-  category: string;
+  category: { name: string; id: string };
   basePrice: number;
+  image: string;
 }
 
 const MenuPage: React.FC = () => {
@@ -106,21 +108,23 @@ const MenuPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Menu</Text>
-      <TouchableOpacity
-        style={[
-          styles.actionButton,
-          { marginBottom: 20, backgroundColor: "#2196F3" },
-        ]}
-        onPress={() => router.push("/add-menu-item")}
-      >
-        <Text style={styles.actionText}>Add Menu Item</Text>
-      </TouchableOpacity>
-      <FlatList
-        data={menuItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-      />
+      <ScrollView>
+        <Text style={styles.title}>Menu</Text>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { marginBottom: 20, backgroundColor: "#2196F3" },
+          ]}
+          onPress={() => router.push("/add-menu-item")}
+        >
+          <Text style={styles.actionText}>Add Menu Item</Text>
+        </TouchableOpacity>
+        <FlatList
+          data={menuItems}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id}
+        />
+      </ScrollView>
     </View>
   );
 };

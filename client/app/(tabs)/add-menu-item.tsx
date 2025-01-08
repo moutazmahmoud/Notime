@@ -14,8 +14,8 @@ import * as ImagePicker from "expo-image-picker";
 import { API_URL, createMenuItem } from "../../services/menuItemsService";
 import { useRouter } from "expo-router";
 import { useUser } from "@/context/UserContext";
-import * as FileSystem from "expo-file-system";
 import axios from "axios";
+import { AntDesign } from "@expo/vector-icons";
 
 const AddMenuItemPage: React.FC = () => {
   const [name, setName] = useState("");
@@ -59,10 +59,10 @@ const AddMenuItemPage: React.FC = () => {
       Alert.alert("Error", "Please select an image for the menu item.");
       return;
     }
-  
+
     try {
       let imageFile: File;
-  
+
       if (Platform.OS === "web") {
         // For web, assume imageUri is already a valid file
         const response = await fetch(imageUri);
@@ -77,25 +77,25 @@ const AddMenuItemPage: React.FC = () => {
         const blob = await response.blob();
         imageFile = new File([blob], fileName, { type: mimeType });
       }
-  
+
       // Prepare the customizations array
       const customizationsArray = Array.isArray(customizations)
         ? customizations
         : JSON.parse(customizations || "[]");
-  
+
       const formData = new FormData();
       formData.append("name", name);
       formData.append("category", category);
       formData.append("basePrice", String(Number(basePrice)));
       formData.append("customizations", JSON.stringify(customizationsArray));
-  
+
       if (Platform.OS === "web") {
         formData.append("image", imageFile); // Append the file here for web
       } else {
         const file = new File([blob], "menu-item.jpg", { type: blob.type });
         formData.append("image", file); // Append the file here for native platforms
       }
-  
+
       // Send the form data to your backend API
       await axios.post(`${API_URL}/create`, formData, {
         headers: {
@@ -103,20 +103,34 @@ const AddMenuItemPage: React.FC = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       Alert.alert("Success", "Menu item added successfully!");
+      // Reset the state after successful submission
+      setName("");
+      setCategory("");
+      setBasePrice(0);
+      setCustomizations("");
+      setImageUri(null);
+
       router.push("/menu");
     } catch (error) {
       console.error("Error creating menu item: ", error);
       Alert.alert("Error", "Failed to add menu item.");
     }
   };
-  
 
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Text style={styles.title}>Add Menu Item</Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <AntDesign name="left" size={20} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.title} className="mt-6">
+          Add Menu Item
+        </Text>
         <TextInput
           style={styles.input}
           placeholder="Name"
@@ -132,8 +146,8 @@ const AddMenuItemPage: React.FC = () => {
         <TextInput
           style={styles.input}
           placeholder="Base Price"
-          value={basePrice}
-          onChangeText={setBasePrice}
+          value={String(Number(basePrice))}
+          onChangeText={(str) => setBasePrice(Number(str) || 0)}
           keyboardType="numeric"
         />
         <TextInput
@@ -221,6 +235,16 @@ const styles = StyleSheet.create({
   imageText: {
     fontSize: 16,
     color: "#888",
+  },
+  backButton: {
+    backgroundColor: "#6200EE",
+    padding: 10,
+    borderRadius: 5,
+    width: 40,
+  },
+  backButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

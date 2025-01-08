@@ -3,7 +3,6 @@ import { Platform } from "react-native";
 
 export const API_URL = "http://192.168.1.101:4000/menu-item";
 
-
 // Create a new menu item
 export const createMenuItem = async (
   token: string,
@@ -16,11 +15,17 @@ export const createMenuItem = async (
   }
 ) => {
   try {
+    const customizationsArray = Array.isArray(menuItemData.customizations)
+      ? menuItemData.customizations
+      : JSON.parse(menuItemData.customizations || "[]");
     const formData = new FormData();
     formData.append("name", menuItemData.name);
     formData.append("category", menuItemData.category);
     formData.append("basePrice", menuItemData.basePrice.toString());
-    formData.append("customizations", JSON.stringify(menuItemData.customizations));
+    formData.append(
+      "customizations",
+      JSON.stringify(customizationsArray)
+    );
 
     if (Platform.OS !== "web") {
       // Fetch the image file from the URI and convert it to a Blob/File
@@ -45,7 +50,6 @@ export const createMenuItem = async (
     throw new Error("Error creating menu item: " + error.message);
   }
 };
-
 
 // Get all menu items with optional category filter
 export const getMenuItems = async (token: string, category?: string) => {
@@ -87,7 +91,10 @@ export const updateMenuItem = async (
     formData.append("name", updatedData.name);
     formData.append("category", updatedData.category);
     formData.append("basePrice", updatedData.basePrice.toString());
-    formData.append("customizations", JSON.stringify(updatedData.customizations));
+    formData.append(
+      "customizations",
+      JSON.stringify(updatedData.customizations)
+    );
 
     if (updatedData.image) {
       formData.append("image", updatedData.image); // Append the image file if provided
