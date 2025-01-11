@@ -55,3 +55,25 @@ export const deleteUser = async (id: string, token: string) => {
     throw new Error(error.response?.data?.message || "Failed to delete user");
   }
 };
+
+
+export const toggleLikedMenuItem = async (
+  token: string,
+  userId: string,
+  menuItemId: string
+) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/${userId}/toggle-liked-item`,
+      { menuItemId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.likedMenuItems; // Updated liked item IDs
+  } catch (error: any) {
+    throw new Error("Error toggling liked menu item: " + error.message);
+  }
+};

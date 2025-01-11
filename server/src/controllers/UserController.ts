@@ -183,3 +183,55 @@ export const getUserById: RequestHandler = async (req, res) => {
 // - Reset Password: Generate a token and send it to the user's email for resetting the password.
 // - Promote User Role: Allow admin to promote/demote user roles (e.g., "customer" to "admin").
 // - Deactivate User: Temporarily disable a user's account instead of deleting it.
+
+export const toggleLikedMenuItem: RequestHandler = async (req, res) => {
+  const { menuItemId } = req.body as { menuItemId: string };
+  const { id } = req.params;
+  console.log("toggleLikedMenuItem:", id);
+
+  try {
+    // Validate input
+    if (!menuItemId) {
+      res.status(400).json({ message: "Menu item ID is required" });
+      return;
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    // Ensure likedMenuItems exists as an array
+    user.likedMenuItems = user.likedMenuItems || [];
+    const isMenuItemLiked = user.likedMenuItems.includes(menuItemId);
+
+    if (isMenuItemLiked) {
+      // Remove the menu item from likedMenuItems
+      user.likedMenuItems = user.likedMenuItems.filter(
+        (itemId) => itemId.toString() !== menuItemId
+      );
+
+      await user.save();
+      console.log("Menu item unliked:", user.likedMenuItems);
+      res.status(200).json({
+        message: "Menu item unliked",
+        likedMenuItems: user.likedMenuItems,
+      });
+    } else {
+      // Add the menu item to likedMenuItems
+      user.likedMenuItems.push(menuItemId);
+      await user.save();
+      console.log("Menu item liked:", user.likedMenuItems);
+      res.status(200).json({
+        message: "Menu item liked",
+        likedMenuItems: user.likedMenuItems,
+      });
+    }
+  } catch (error) {
+    console.error("Error toggling liked menu item:", error);
+    res.status(500).json({
+      message: "Failed to toggle liked menu item",
+    });
+  }
+};

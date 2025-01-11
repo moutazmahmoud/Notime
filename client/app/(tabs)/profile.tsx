@@ -193,7 +193,7 @@ const ProfileScreen: React.FC = () => {
         animationType="slide"
       >
         <View style={styles.modalContainer}>
-          <View className="bg-white rounded-lg p-4" style={{ maxWidth: "86%" }}>
+          <View className="bg-white rounded-lg p-1" style={{ maxWidth: "86%" }}>
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-xl text-bold text-black">
                 Select Avatar

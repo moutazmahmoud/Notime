@@ -10,6 +10,8 @@ interface MenuItem extends Document {
   basePrice: number;
   customizations: mongoose.Types.ObjectId[]; // Array of CustomizationOption references
   image: string;
+  rate: number;
+  description: string;
 }
 
 const menuItemSchema = new Schema<MenuItem>({
@@ -23,6 +25,8 @@ const menuItemSchema = new Schema<MenuItem>({
     name: { type: String, required: true }, // Embedded category name
   },
   basePrice: { type: Number, required: true },
+  rate: { type: Number, default: 4.8 },
+  description: { type: String, default: "" },
   image: { type: String },
   customizations: [
     {

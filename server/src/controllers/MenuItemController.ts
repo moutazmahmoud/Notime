@@ -68,10 +68,11 @@ export const createMenuItem: RequestHandler = async (
   res,
   next
 ): Promise<void> => {
-  const { name, category, basePrice, customizations } = req.body;
+  const { name, category, basePrice, customizations , description} = req.body;
   const image = req.file; // Use multer's file handling
   console.log("Step 0: Received data:", {
     name,
+    description,
     category,
     basePrice,
     customizations,
@@ -165,6 +166,7 @@ export const createMenuItem: RequestHandler = async (
     // Create the new menu item
     const newMenuItem = new MenuItem({
       name,
+      description,
       category: {
         id: foundCategory._id,
         name: foundCategory.name,
@@ -196,7 +198,6 @@ export const getMenuItems: RequestHandler = async (
 ): Promise<void> => {
   const { category } = req.query;
 
-  console.log("Fetching menu items with category:", category);
 
   try {
     const query = category ? { "category.name": category as string } : {};
@@ -205,7 +206,6 @@ export const getMenuItems: RequestHandler = async (
       model: CustomizationOption,
     });
 
-    console.log("Menu items found:", menuItems);
     res.status(200).json(menuItems);
   } catch (error) {
     console.error("Error fetching menu items:", error);
@@ -254,7 +254,7 @@ export const updateMenuItem: RequestHandler = async (
   next
 ): Promise<void> => {
   const { id } = req.params;
-  const { name, categoryName, basePrice, customizations } = req.body;
+  const { name, categoryName, basePrice, customizations , description} = req.body;
   const image = req.file; // The uploaded image file (if any)
 
   console.log("Updating menu item with ID:", id);
@@ -295,6 +295,7 @@ export const updateMenuItem: RequestHandler = async (
         ? { id: foundCategory._id, name: foundCategory.name }
         : undefined,
       basePrice,
+      description,
       customizations: parsedCustomizations,
     };
 

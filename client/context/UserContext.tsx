@@ -3,24 +3,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AvatarKey } from "@/lib/utils";
 import { MenuItem } from "@/app/(tabs)/menu";
 
-interface CartItem extends MenuItem {
+export const API_URL_Image = "http://192.168.1.101:4000"; // Used to get images for menu items
+
+export interface CartItem extends MenuItem {
   quantity: number;
 }
 
-interface UserContextType {
-  username: string;
-  userEmail: string;
-  systemAvatar: AvatarKey;
-  menuItems: MenuItem[];
-  token: string;
-  role: string;
-  userId: string;
-  cart: CartItem[];
+export interface UserContextType {
+  username?: string;
+  userEmail?: string;
+  systemAvatar?: AvatarKey;
+  menuItems?: MenuItem[];
+  likedMenuItems?: string[];
+  token?: string;
+  role?: string;
+  userId?: string;
+  cart?: CartItem[];
   setUser: (user: Partial<UserContextType>) => void;
   addToCart: (item: MenuItem, quantity?: number) => void;
   removeFromCart: (id: string) => void;
   updateCartItemQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  updateLikedMenuItems: (newLikedItems: string[]) => void;
   logout: () => void;
 }
 
@@ -37,14 +41,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     userEmail: "",
     userId: "",
     menuItems: [],
+    likedMenuItems: [],
+    cart: [],
   });
 
-  // Save user to AsyncStorage and context
-  const setUser = (newUser: Partial<UserContextType>) => {
-    setUserState((prev) => {
-      const updatedUser = { ...prev, ...newUser };
+  const setUser = (
+    newUser:
+      | Partial<UserContextType>
+      | ((prevUser: Partial<UserContextType>) => Partial<UserContextType>)
+  ) => {
+    setUserState((prevUser) => {
+      const updatedUser =
+        typeof newUser === "function"
+          ? newUser(prevUser)
+          : { ...prevUser, ...newUser };
 
-      // Save updated user data to AsyncStorage
       AsyncStorage.setItem("userData", JSON.stringify(updatedUser))
         .then(() =>
           console.log("User data saved to AsyncStorage:", updatedUser)
@@ -55,9 +66,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  // Add item to cart
+  const updateLikedMenuItems = (newLikedItems: string[]) => {
+    setUser((prevUser: Partial<UserContextType>) => ({
+      ...prevUser,
+      likedMenuItems: newLikedItems,
+    }));
+  };
+
   const addToCart = (item: MenuItem, quantity: number = 1) => {
-    setUser((prevUser) => {
+    setUser((prevUser: Partial<UserContextType>) => {
+      console.log("addToCart:", prevUser);
+      console.log("addToCart:", item);
+      console.log("addToCart:", quantity);
       const cart = prevUser.cart || [];
       const existingItem = cart.find((cartItem) => cartItem._id === item._id);
 
@@ -69,11 +89,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           )
         : [...cart, { ...item, quantity }];
 
+      console.log("updatedCart:", updatedCart);
+
       return { ...prevUser, cart: updatedCart };
     });
   };
 
-  // Remove item from cart
   const removeFromCart = (id: string) => {
     setUser((prevUser) => ({
       ...prevUser,
@@ -81,7 +102,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   };
 
-  // Update cart item quantity
   const updateCartItemQuantity = (id: string, quantity: number) => {
     setUser((prevUser) => ({
       ...prevUser,
@@ -91,12 +111,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   };
 
-  // Clear the cart
   const clearCart = () => {
     setUser((prevUser) => ({ ...prevUser, cart: [] }));
   };
 
-  // Logout user
   const logout = async () => {
     await AsyncStorage.removeItem("userData");
     setUserState({
@@ -107,11 +125,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       userEmail: "",
       userId: "",
       menuItems: [],
+      likedMenuItems: [],
       cart: [],
     });
   };
 
-  // Restore user data on app load
   useEffect(() => {
     const restoreUser = async () => {
       const storedUser = await AsyncStorage.getItem("userData");
@@ -130,6 +148,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         addToCart,
         removeFromCart,
         updateCartItemQuantity,
+        updateLikedMenuItems,
         clearCart,
         logout,
       }}

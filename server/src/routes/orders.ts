@@ -15,7 +15,13 @@ const router = Router();
 // Get all orders
 router.get("/all", authToken, orderController.getorders);
 
+// Get order by ID
+router.get("/:orderId", authToken, orderController.getOrderById);
+
+// Get orders by user ID
+router.get("/user-orders/:userId", orderController.getOrdersByUser);
+
 // Add the handler to the router
-router.post("/new-order", authToken, orderController.addOrder);
+router.post("/new-order", orderController.addOrder);
 
 export default router;

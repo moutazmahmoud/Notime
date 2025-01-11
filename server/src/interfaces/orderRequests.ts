@@ -1,11 +1,12 @@
-import { Request } from 'express';
+import { Request } from "express";
 
 export interface AddOrderRequest extends Request {
   body: {
-    item: string;
-    quantity: number;
-    price: number;
-    status?: string;
+    items: { item: string; quantity: number }[];
+    totalPrice: number;
+    estimatedCompletionTime?: Date;
+    customerId: string;
+    customerNotes?: string;
   };
 }
 

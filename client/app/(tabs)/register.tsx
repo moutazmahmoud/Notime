@@ -5,6 +5,7 @@ import {
   Button,
   Text,
   Alert,
+  ScrollView,
   TouchableOpacity,
 } from "react-native";
 import { register } from "../../services/authService";
@@ -46,13 +47,15 @@ const Register = () => {
       console.log("Password Mismatch");
       return;
     }
-        // Validate phone number format
+    // Validate phone number format
     if (!isValidPhoneNumber(phoneNumber)) {
-      Alert.alert("Invalid Phone Number", "Please enter a valid phone number (10-15 digits).");
+      Alert.alert(
+        "Invalid Phone Number",
+        "Please enter a valid phone number (10-15 digits)."
+      );
       console.log("Invalid Phone Number");
       return;
     }
-
 
     setLoading(true);
     try {
@@ -74,65 +77,67 @@ const Register = () => {
   };
 
   return (
-    <View className="bg-white flex-1 flex-col p-4">
-      <Text className="text-2xl text-center mt-10 text-bold">Signup</Text>
-      <View className="flex-col mt-10 items-center justify-center">
-        <LabeledTextInput
-          label="Full Name"
-          value={username}
-          placeholder="Enter your email"
-          onChangeText={setName}
-          styleClasses="m-4"
-        />
-        <LabeledTextInput
-          label="Email"
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={setEmail}
-          styleClasses="m-4"
-        />
-        <LabeledTextInput
-          label="Phone Number"
-          value={phoneNumber}
-          placeholder="Enter your phone number"
-          onChangeText={setPhoneNumber}
-          styleClasses="m-4"
-          keyboardType="phone-pad"
-        />
-        <LabeledTextInput
-          label="Password"
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={setPassword}
-          secureTextEntry={true}
-          styleClasses="m-4"
-        />
-        <LabeledTextInput
-          label="Confirm Password"
-          value={confirmPassword}
-          placeholder="Confirm your password"
-          onChangeText={setConfirmPassword}
-          secureTextEntry={true}
-          styleClasses="m-4"
-        />
-        <TouchableOpacity
-          className="w-full mt-6 rounded-lg bg-primary-10"
-          onPress={handleRegister}
-        >
-          <Text className="w-full text-center px-2 py-2 rounded-2 text-white">
-            {loading ? "Loading..." : "Sign Up"}
-          </Text>
-        </TouchableOpacity>
-        <View className="flex-row justify-center mt-4">
-          <Text className="">Have an account?</Text>
+    <View className="bg-white flex-1 flex-col p-1">
+      <Text className="text-2xl text-center mt-2 text-bold">Signup</Text>
+      <ScrollView>
+        <View className="flex-col mt-2 items-center justify-center">
+          <LabeledTextInput
+            label="Full Name"
+            value={username}
+            placeholder="Enter your email"
+            onChangeText={setName}
+            styleClasses="m-0.5"
+          />
+          <LabeledTextInput
+            label="Email"
+            value={email}
+            placeholder="Enter your email"
+            onChangeText={setEmail}
+            styleClasses="m-0.5"
+          />
+          <LabeledTextInput
+            label="Phone Number"
+            value={phoneNumber}
+            placeholder="Enter your phone number"
+            onChangeText={setPhoneNumber}
+            styleClasses="m-0.5"
+            keyboardType="phone-pad"
+          />
+          <LabeledTextInput
+            label="Password"
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={setPassword}
+            secureTextEntry={true}
+            styleClasses="m-0.5"
+          />
+          <LabeledTextInput
+            label="Confirm Password"
+            value={confirmPassword}
+            placeholder="Confirm your password"
+            onChangeText={setConfirmPassword}
+            secureTextEntry={true}
+            styleClasses="m-0.5"
+          />
           <TouchableOpacity
-            className="text-primary"
-            onPress={() => router.push("/login")}
+            className="w-full mt-1.5 rounded-lg bg-primary-10"
+            onPress={handleRegister}
           >
-            <Text className="text-primary-10"> Sign in here</Text>
+            <Text className="w-full text-center px-0.5 py-0.5 rounded-2 text-white">
+              {loading ? "Loading..." : "Sign Up"}
+            </Text>
           </TouchableOpacity>
+          <View className="flex-row justify-center mt-1">
+            <Text className="">Have an account?</Text>
+            <TouchableOpacity
+              className="text-primary"
+              onPress={() => router.push("/login")}
+            >
+              <Text className="text-primary-10"> Sign in here</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };

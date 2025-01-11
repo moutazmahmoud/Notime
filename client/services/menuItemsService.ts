@@ -78,29 +78,12 @@ export const getMenuItemById = async (id: string) => {
 // Update a menu item
 export const updateMenuItem = async (
   id: string,
-  updatedData: {
-    name: string;
-    category: string;
-    basePrice: number;
-    customizations: string[];
-    image?: File; // Optional image file for updating
-  }
+  updatedData: FormData
 ) => {
   try {
-    const formData = new FormData();
-    formData.append("name", updatedData.name);
-    formData.append("category", updatedData.category);
-    formData.append("basePrice", updatedData.basePrice.toString());
-    formData.append(
-      "customizations",
-      JSON.stringify(updatedData.customizations)
-    );
+    
 
-    if (updatedData.image) {
-      formData.append("image", updatedData.image); // Append the image file if provided
-    }
-
-    const response = await axios.put(`${API_URL}/${id}`, formData, {
+    const response = await axios.put(`${API_URL}/${id}`, updatedData, {
       headers: {
         "Content-Type": "multipart/form-data", // Important for file uploads
       },

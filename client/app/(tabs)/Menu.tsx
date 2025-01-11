@@ -14,12 +14,13 @@ import {
   deleteMenuItem,
   updateMenuItem,
 } from "../../services/menuItemsService";
-import { useUser } from "@/context/UserContext";
+import { API_URL_Image, useUser } from "@/context/UserContext";
 import { useRouter } from "expo-router";
 
 export interface MenuItem {
   _id: string;
   name: string;
+  description: string;
   category: { name: string; id: string };
   basePrice: number;
   image: string;
@@ -31,13 +32,12 @@ const MenuPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const API_URL = "http://192.168.1.101:4000";
 
   // Fetch menu items on component mount
-  // useEffect(() => {
+  useEffect(() => {
   const fetchMenuItems = async () => {
     try {
-      const items = await getMenuItems(token);
+      const items = await getMenuItems(token || "");
       setMenuItems(items);
       console.log("items:", items);
     } catch (err) {
@@ -47,7 +47,7 @@ const MenuPage: React.FC = () => {
     }
   };
   fetchMenuItems();
-  // }, []);
+  }, []);
 
   // Handle edit operation (navigate to edit page)
   const handleEdit = (itemId: string) => {
@@ -69,7 +69,7 @@ const MenuPage: React.FC = () => {
 
   // Render menu item
   const renderItem = ({ item }: { item: MenuItem }) => {
-    const imageUrl = `${API_URL}${item.image}`;
+    const imageUrl = `${API_URL_Image}${item.image}`;
     return (
       <View style={styles.card} className="flex-col">
         <View className="flex-row w-full">

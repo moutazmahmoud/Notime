@@ -50,7 +50,7 @@ const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
           onChangeText={onChangeText}
           secureTextEntry={!isPasswordVisible}
           keyboardType={keyboardType}
-          className="mt-2"
+          className="mt-0.25"
         />
         {secureTextEntry && value != "" && (
           <TouchableOpacity

@@ -9,10 +9,17 @@ interface UserDocument extends Document {
   ordersHistory: [];
   phoneNumber: string;
   systemAvatar: "10" | "20" | "30" | "40" | "50"; // Avatar as union of predefined string values
+  likedMenuItems?: string[];
 }
 
 // Predefined avatar values
-const avatarOptions: UserDocument["systemAvatar"][] = ["10", "20", "30", "40", "50"];
+const avatarOptions: UserDocument["systemAvatar"][] = [
+  "10",
+  "20",
+  "30",
+  "40",
+  "50",
+];
 
 // Helper function to randomly select a predefined avatar
 const generateRandomAvatar = (): UserDocument["systemAvatar"] => {
@@ -29,6 +36,7 @@ const UserSchema = new Schema(
     phoneNumber: { type: String, required: false },
     role: { type: String, enum: ["admin", "customer"], default: "customer" },
     systemAvatar: { type: String, enum: avatarOptions }, // Predefined avatar values
+    likedMenuItems: [{ type: Schema.Types.ObjectId, ref: "MenuItem" }],
   },
   { timestamps: true }
 );

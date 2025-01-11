@@ -16,9 +16,11 @@ import { useRouter } from "expo-router";
 import { useUser } from "@/context/UserContext";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
+import BackButton from "@/components/Button";
 
 const AddMenuItemPage: React.FC = () => {
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const { token } = useUser();
   const [category, setCategory] = useState("");
   const [basePrice, setBasePrice] = useState<number>(0);
@@ -54,46 +56,40 @@ const AddMenuItemPage: React.FC = () => {
     console.log("Selected Image URI:", uri);
     setImageUri(uri);
   };
+
   const handleSubmit = async () => {
-    if (!imageUri) {
-      Alert.alert("Error", "Please select an image for the menu item.");
-      return;
-    }
-
     try {
-      let imageFile: File;
-
-      if (Platform.OS === "web") {
-        // For web, assume imageUri is already a valid file
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        const fileName = imageUri.split("/").pop() || "image.jpg";
-        imageFile = new File([blob], fileName, { type: blob.type });
-      } else {
-        // For native platforms, convert URI to a File object
-        const fileName = imageUri.split("/").pop() || "image.jpg";
-        const mimeType = "image/jpeg"; // Adjust this if necessary
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        imageFile = new File([blob], fileName, { type: mimeType });
-      }
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("basePrice", String(Number(basePrice)));
 
       // Prepare the customizations array
       const customizationsArray = Array.isArray(customizations)
         ? customizations
         : JSON.parse(customizations || "[]");
-
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("category", category);
-      formData.append("basePrice", String(Number(basePrice)));
       formData.append("customizations", JSON.stringify(customizationsArray));
 
-      if (Platform.OS === "web") {
-        formData.append("image", imageFile); // Append the file here for web
-      } else {
-        const file = new File([blob], "menu-item.jpg", { type: blob.type });
-        formData.append("image", file); // Append the file here for native platforms
+      if (imageUri) {
+        let imageFile: File;
+
+        if (Platform.OS === "web") {
+          // For web, assume imageUri is already a valid file
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+          const fileName = imageUri.split("/").pop() || "image.jpg";
+          imageFile = new File([blob], fileName, { type: blob.type });
+        } else {
+          // For native platforms, convert URI to a File object
+          const fileName = imageUri.split("/").pop() || "image.jpg";
+          const mimeType = "image/jpeg"; // Adjust this if necessary
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+          imageFile = new File([blob], fileName, { type: mimeType });
+        }
+
+        formData.append("image", imageFile);
       }
 
       // Send the form data to your backend API
@@ -122,12 +118,7 @@ const AddMenuItemPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <AntDesign name="left" size={20} color="#fff" />
-        </TouchableOpacity>
+        <BackButton onPress={() => router.back()} />
         <Text style={styles.title} className="mt-6">
           Add Menu Item
         </Text>
@@ -136,6 +127,13 @@ const AddMenuItemPage: React.FC = () => {
           placeholder="Name"
           value={name}
           onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+          
         />
         <TextInput
           style={styles.input}

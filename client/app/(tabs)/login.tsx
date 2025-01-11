@@ -59,9 +59,9 @@ const Login = () => {
   };
 
   return (
-    <View className="bg-white flex-1 flex-col p-4">
-      <Text className="text-2xl text-center mt-10 font-bold">Login</Text>
-      <View className="flex-col mt-10 items-center justify-center">
+    <View className="bg-white flex-1 flex-col p-1">
+      <Text className="text-2xl text-center mt-2 font-bold">Login</Text>
+      <View className="flex-col mt-2 items-center justify-center">
         <LabeledTextInput
           label="Email"
           value={email}
@@ -74,19 +74,19 @@ const Login = () => {
           placeholder="Enter your password"
           onChangeText={setPassword}
           isShowingForgotPassword={true}
-          styleClasses="m-6"
+          styleClasses="m-1.5"
           secureTextEntry={true}
         />
         <TouchableOpacity
-          className="w-full mt-6 rounded-lg bg-primary-10"
+          className="w-full mt-1 rounded-lg bg-primary-10"
           onPress={handleLogin}
           disabled={loading}
         >
-          <Text className="w-full text-center px-2 py-2 text-white">
+          <Text className="w-full text-center px-0.5 py-0.5 text-white">
             {loading ? "Loading..." : "Login"}
           </Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center mt-6">
+        <View className="flex-row justify-center mt-1.5">
           <Text>Don't have an account?</Text>
           <TouchableOpacity onPress={() => router.push("/register")}>
             <Text className="text-primary-10"> Sign up here</Text>

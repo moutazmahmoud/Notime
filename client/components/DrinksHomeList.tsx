@@ -1,5 +1,7 @@
 import { MenuItem } from "@/app/(tabs)/menu";
+import { API_URL_Image, useUser } from "@/context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   View,
@@ -10,8 +12,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export const API_URL = "http://192.168.1.101:4000";
-
 export default function DrinksHomeView({
   items,
   title,
@@ -21,15 +21,22 @@ export default function DrinksHomeView({
   title?: string;
   classes?: string;
 }) {
-  console.log("items from flatlist view:", items);
+  const router = useRouter();
+  // Move the useUser hook call here, at the top level of the component
+  const { addToCart } = useUser();
+
+  // Render each item in the FlatList
   const renderDrinkItem = ({ item }: { item: MenuItem }) => {
-    // Construct the full image URL
-    const imageUrl = `${API_URL}${item.image}`;
+    const imageUrl = `${API_URL_Image}${item.image}`;
 
     return (
-      <TouchableOpacity className="" key={item._id} style={styles.card}>
-        <View className="flex-col items-center justify-between bg-white rounded-lg w-full p-3">
-          <Image source={{ uri: imageUrl }} style={styles.image} className="" />
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => router.push(`/menu-item/${item._id}`)}
+        className="p-0.5"
+      >
+        <View className="flex-col items-center justify-between bg-white rounded-lg w-full">
+          <Image source={{ uri: imageUrl }} style={styles.image} />
           <Text className="text-textPrimary text-lg" style={styles.name}>
             {item.name}
           </Text>
@@ -37,9 +44,12 @@ export default function DrinksHomeView({
             {item.category.name}
           </Text>
 
-          <View className="flex-row justify-between items-center mt-2 w-full">
+          <View className="flex-row justify-between items-center mt-0.5 w-full">
             <Text className="text-lg">${item.basePrice.toFixed(2)}</Text>
-            <TouchableOpacity className="bg-primary-10 rounded-xl p-2">
+            <TouchableOpacity
+              className="bg-primary-10 rounded-xl p-0.5"
+              onPress={() => addToCart(item, 1)} // Call addToCart here
+            >
               <AntDesign name="plus" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
@@ -49,27 +59,29 @@ export default function DrinksHomeView({
   };
 
   return (
-    <View style={styles.container} className={classes}>
-      {title && (
+    <View className="-mr-1">
+      <View style={styles.container} className={classes}>
+        {/* {title && (
         <Text style={styles.title} className="text-2xl">
           {title}
         </Text>
-      )}
-      <FlatList
-        data={items}
-        renderItem={renderDrinkItem}
-        keyExtractor={(item) => item._id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.list}
-      />
+      )} */}
+        <FlatList
+          data={items}
+          renderItem={renderDrinkItem}
+          keyExtractor={(item) => item._id} // FlatList handles the key
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.list}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "black",
+    // Add your container styles
   },
   title: {
     fontSize: 20,
@@ -78,12 +90,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   list: {
-    // padding: 16,
     marginTop: 8,
   },
   card: {
     width: 150,
-    // height: 220,
     alignItems: "center",
     marginRight: 16,
     backgroundColor: "#FFFFFF",
