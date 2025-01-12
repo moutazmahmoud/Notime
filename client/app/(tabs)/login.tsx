@@ -10,8 +10,9 @@ import {
 import { login } from "../../services/authService";
 import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
-import { isValidEmail } from "@/lib/utils";
+import { handleNotification, isValidEmail } from "@/lib/utils";
 import { useUser } from "../../context/UserContext"; // Use custom hook for user context
+import Toast from "react-native-toast-message";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,12 +25,14 @@ const Login = () => {
     // Check if any field is empty
     if (!email || !password) {
       Alert.alert("Missing Fields", "Please fill out all fields.");
+      handleNotification("error", "Missing Fields");
       return;
     }
 
     // Validate email format
     if (!isValidEmail(email)) {
       Alert.alert("Invalid Email", "Please enter a valid email address.");
+      handleNotification("error", "Invalid Email");
       return;
     }
 
@@ -51,8 +54,10 @@ const Login = () => {
       // Navigate to the home screen
       router.replace("/");
       Alert.alert("Login Successful", `Welcome ${user.username}`);
+      handleNotification("success", "Welcome back! Let's get started.");
     } catch (error) {
       Alert.alert("Login Failed", error.message || "Something went wrong.");
+      handleNotification("error", "Login Failed");
     } finally {
       setLoading(false);
     }

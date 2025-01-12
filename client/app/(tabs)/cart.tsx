@@ -10,6 +10,7 @@ import { useUser } from "@/context/UserContext";
 import BackButton from "@/components/Button";
 import { useRouter } from "expo-router";
 import { createNewOrder } from "@/services/ordersService";
+import { handleNotification } from "@/lib/utils";
 
 const CartPage: React.FC = () => {
   const {
@@ -67,7 +68,7 @@ const CartPage: React.FC = () => {
   // Handle ordering logic
   const handleOrder = async () => {
     if (localCart.length > 0) {
-      const response = await createNewOrder(token as string, {
+      const newOrder = await createNewOrder(token as string, {
         items: localCart.map((item) => ({
           item: item._id,
           quantity: item.quantity,
@@ -76,12 +77,12 @@ const CartPage: React.FC = () => {
         customerNotes: "",
         customerId: userId as string,
       });
-      console.log("Order placed:", response);
-      console.log("Order placed:", cart);
-      clearCart();
-      alert("Your order has been placed!");
+      if (!newOrder) {
+        handleNotification("success", "Your order has been placed!");
+        clearCart();
+      }
     } else {
-      alert("Your cart is empty!");
+      handleNotification("error", "Your cart is empty!");
     }
   };
 

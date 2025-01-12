@@ -19,13 +19,18 @@ router.post("/register", registerUser);
 // Login route
 router.post("/login", loginUser);
 
-router.put("/edit/:id", authorizeSelf(), editUser);
+router.put("/edit/:id", authToken, authorizeSelf(), editUser);
 
-router.delete("/:id", authorizeSelf(), editUser);
+router.delete("/:id", authToken, authorizeSelf(), editUser);
 
-router.post("/:id/toggle-liked-item", toggleLikedMenuItem);
+router.post(
+  "/:id/toggle-liked-item",
+  authToken,
+  authorizeSelf(),
+  toggleLikedMenuItem
+);
 
 // Admin-only
-router.get("/all", authorizeAdmin, getAllUsers);
+router.get("/all",authToken, authorizeAdmin, getAllUsers);
 
 export default router;

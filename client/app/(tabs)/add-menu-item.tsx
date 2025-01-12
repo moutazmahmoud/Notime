@@ -17,6 +17,7 @@ import { useUser } from "@/context/UserContext";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import BackButton from "@/components/Button";
+import { handleNotification } from "@/lib/utils";
 
 const AddMenuItemPage: React.FC = () => {
   const [name, setName] = useState("");
@@ -100,13 +101,13 @@ const AddMenuItemPage: React.FC = () => {
         },
       });
 
-      Alert.alert("Success", "Menu item added successfully!");
       // Reset the state after successful submission
       setName("");
       setCategory("");
       setBasePrice(0);
       setCustomizations("");
       setImageUri(null);
+      handleNotification("success", "Menu item added successfully!");
 
       router.push("/menu");
     } catch (error) {

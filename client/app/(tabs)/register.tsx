@@ -12,7 +12,8 @@ import { register } from "../../services/authService";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
-import { isValidEmail, isValidPhoneNumber } from "@/lib/utils";
+import { handleNotification, isValidEmail, isValidPhoneNumber } from "@/lib/utils";
+import Toast from "react-native-toast-message";
 
 const Register = () => {
   const [username, setName] = useState("");
@@ -23,18 +24,20 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation(); // Get the navigation object
 
+
+
   const handleRegister = async () => {
     // Check if any field is empty
     if (!username || !email || !password || !confirmPassword) {
       Alert.alert("Missing Fields", "Please fill out all fields.");
-      console.log("Missing Fields");
+      handleNotification("error", "Missing Fields");
       return;
     }
 
     // Validate email format
     if (!isValidEmail(email)) {
       Alert.alert("Invalid Email", "Please enter a valid email address.");
-      console.log("Invalid Email");
+      handleNotification("error", "Invalid Email");
       return;
     }
 
@@ -44,7 +47,7 @@ const Register = () => {
         "Password Mismatch",
         "Passwords do not match. Please try again."
       );
-      console.log("Password Mismatch");
+      handleNotification("error", "Password Mismatch");
       return;
     }
     // Validate phone number format
@@ -53,6 +56,7 @@ const Register = () => {
         "Invalid Phone Number",
         "Please enter a valid phone number (10-15 digits)."
       );
+      handleNotification("error", "Invalid Phone Number");
       console.log("Invalid Phone Number");
       return;
     }
@@ -62,6 +66,10 @@ const Register = () => {
       const res = await register(username, email, password);
       const userData = await res;
       Alert.alert("Registration Successful", `Welcome ${username}`);
+      handleNotification(
+        "success",
+        "Your account has been successfully created. Start exploring now!"
+      );
       console.log(userData);
       router.replace("/login");
 
@@ -84,7 +92,7 @@ const Register = () => {
           <LabeledTextInput
             label="Full Name"
             value={username}
-            placeholder="Enter your email"
+            placeholder="Enter your name"
             onChangeText={setName}
             styleClasses="m-0.5"
           />

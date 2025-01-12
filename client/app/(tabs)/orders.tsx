@@ -51,12 +51,37 @@ const MyOrdersScreen: React.FC = () => {
     }
   };
 
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "pending":
+        return styles.pendingStatus;
+      case "accepted":
+        return styles.acceptedStatus;
+      case "inprogress":
+        return styles.inProgressStatus;
+      case "completed":
+        return styles.completedStatus;
+      case "canceled":
+        return styles.canceledStatus;
+      default:
+        return styles.defaultStatus;
+    }
+  };
+
   const renderOrderItem = ({ item }: { item: any }) => (
-    <View style={styles.orderItem} key={item.id}>
+    <View style={[styles.orderItem, getStatusStyle(item.status)]} key={item._id}>
       <Text style={styles.orderText}>Order ID: {item.id}</Text>
       <Text style={styles.orderText}>Status: {item.status}</Text>
       <Text style={styles.orderText}>Total: ${item.totalPrice.toFixed(2)}</Text>
-      <CountdownTimer estimatedCompletionTime={item.estimatedCompletionTime} />
+      {item.status === "inprogress" && item.estimatedCompletionTime && (
+        <>
+          <Text style={styles.orderText}>
+            Estimated Completion Time:{" "}
+            {new Date(item.estimatedCompletionTime).toLocaleTimeString()}
+          </Text>
+          <CountdownTimer estimatedCompletionTime={item.estimatedCompletionTime} />
+        </>
+      )}
     </View>
   );
 
@@ -116,7 +141,7 @@ const MyOrdersScreen: React.FC = () => {
         <FlatList
           data={filteredOrders}
           renderItem={renderOrderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
         />
       ) : (
         <Text style={styles.noOrdersText}>
@@ -172,6 +197,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  pendingStatus: { borderLeftColor: "#FFA500", borderLeftWidth: 5 },
+  acceptedStatus: { borderLeftColor: "#87CEEB", borderLeftWidth: 5 },
+  inProgressStatus: { borderLeftColor: "#00BFFF", borderLeftWidth: 5 },
+  completedStatus: { borderLeftColor: "#32CD32", borderLeftWidth: 5 },
+  canceledStatus: { borderLeftColor: "#FF6347", borderLeftWidth: 5 },
+  defaultStatus: { borderLeftColor: "#ccc", borderLeftWidth: 5 },
   noOrdersText: {
     fontSize: 16,
     color: "#777",

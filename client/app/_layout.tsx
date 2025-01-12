@@ -11,9 +11,11 @@ import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { UserProvider } from "../context/UserContext";
+import Toast from "react-native-toast-message";
 
 import "../global.css";
 import React from "react";
+import toastConfig from "@/lib/toastConfig";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -61,9 +63,16 @@ function RootLayoutNav() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          <Stack.Screen name="edit-menu-item/[id]" options={{ headerShown: false }} />
-          <Stack.Screen name="menu-item/[id]" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="edit-menu-item/[id]"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="menu-item/[id]"
+            options={{ headerShown: false }}
+          />
         </Stack>
+        <Toast config={toastConfig} />
       </ThemeProvider>
     </UserProvider>
   );

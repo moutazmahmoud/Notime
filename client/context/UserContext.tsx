@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AvatarKey } from "@/lib/utils";
+import { AvatarKey, handleNotification } from "@/lib/utils";
 import { MenuItem } from "@/app/(tabs)/menu";
 
 export const API_URL_Image = "http://192.168.1.101:4000"; // Used to get images for menu items
@@ -89,8 +89,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           )
         : [...cart, { ...item, quantity }];
 
-      console.log("updatedCart:", updatedCart);
-
+      handleNotification("success", "Item added to cart");
       return { ...prevUser, cart: updatedCart };
     });
   };
@@ -113,6 +112,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const clearCart = () => {
     setUser((prevUser) => ({ ...prevUser, cart: [] }));
+
   };
 
   const logout = async () => {

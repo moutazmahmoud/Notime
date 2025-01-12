@@ -110,12 +110,12 @@ export default function HomeScreen() {
         </View>
 
         {/* Drinks Section */}
-        {/* <DrinksHomeView
+        <DrinksHomeView
           items={menuItems || []}
           title="Popular Drinks"
           classes=""
         />
-        <DrinksByCategoryView items={menuItems || []} /> */}
+        <DrinksByCategoryView items={menuItems || []} />
         <View className="h-5.5"></View>
       </ScrollView>
     </View>

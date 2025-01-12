@@ -8,7 +8,17 @@ interface UserDocument extends Document {
   role: "admin" | "customer"; // Define user roles
   ordersHistory: [];
   phoneNumber: string;
-  systemAvatar: "10" | "20" | "30" | "40" | "50"; // Avatar as union of predefined string values
+  systemAvatar:
+    | "10"
+    | "20"
+    | "30"
+    | "40"
+    | "50"
+    | "60"
+    | "70"
+    | "80"
+    | "90"
+    | "100";
   likedMenuItems?: string[];
 }
 
@@ -19,6 +29,11 @@ const avatarOptions: UserDocument["systemAvatar"][] = [
   "30",
   "40",
   "50",
+  "60",
+  "70",
+  "80",
+  "90",
+  "100",
 ];
 
 // Helper function to randomly select a predefined avatar

@@ -15,12 +15,13 @@ import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { MenuItem } from "../(tabs)/menu";
 import { API_URL_Image, useUser } from "@/context/UserContext";
 import { toggleLikedMenuItem } from "@/services/authService";
+import Toast from "react-native-toast-message";
 
 const MenuItemDetailsPage: React.FC = () => {
   const router = useRouter();
   const { id } = useGlobalSearchParams() as { id: string }; // ("" as string); // Ensure 'id' is a string
   const [menuItem, setMenuItem] = useState<MenuItem | null>(null);
-  const { token, userId, setUser, updateLikedMenuItems } = useUser();
+  const { token, userId, updateLikedMenuItems, likedMenuItems } = useUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,15 +59,33 @@ const MenuItemDetailsPage: React.FC = () => {
     );
   }
 
+
+  const handleNotification = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Processing...',
+      text2: 'We are working on it.',
+      autoHide: false, // Manually control dismissal
+    });
+  
+    // Dismiss the notification after some process completes
+    setTimeout(() => {
+      Toast.hide();
+    }, 5000); // Hide after 5 seconds
+  };
+  
+
+  let isLikedItem: boolean = likedMenuItems?.includes(id) || false;
+
   const handleLikeMenuItem = async () => {
     try {
-      const likedMenuItems = await toggleLikedMenuItem(
+      const newLikedMenuItems = await toggleLikedMenuItem(
         token as string,
         userId as string,
         id
       );
-      console.log("likedMenuItems:", likedMenuItems);
-      updateLikedMenuItems(likedMenuItems.likedItems);
+      updateLikedMenuItems(newLikedMenuItems);
+      handleNotification();
     } catch (error) {
       console.error("Error toggling liked menu item:", error);
     }
@@ -88,7 +107,11 @@ const MenuItemDetailsPage: React.FC = () => {
           onPress={handleLikeMenuItem}
           style={styles.backButton}
         >
-          <Ionicons name="heart-outline" size={20} color="#fff" />{" "}
+          <Ionicons
+            name={isLikedItem ? "heart-sharp" : "heart-outline"}
+            size={20}
+            color="#fff"
+          />
           {/* Replace with your favorite icon */}
         </TouchableOpacity>
       </View>

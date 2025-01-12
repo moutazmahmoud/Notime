@@ -11,24 +11,26 @@ import {
 import { login } from "../../services/authService";
 import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
-import { isValidEmail } from "@/lib/utils";
+import { handleNotification, isValidEmail } from "@/lib/utils";
 import { AntDesign } from "@expo/vector-icons";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
+  
   const handleForgotPassword = async () => {
     if (!email) {
       Alert.alert("Missing Fields", "Please fill out this email field.");
-      console.log("Missing Fields email");
+      handleNotification("error", "Missing Fields");
       return;
     }
+
 
     // Validate email format
     if (!isValidEmail(email)) {
       Alert.alert("Invalid Email", "Please enter a valid email address.");
-      console.log("Invalid Email");
+      handleNotification("error", "Invalid Email");
       return;
     }
 

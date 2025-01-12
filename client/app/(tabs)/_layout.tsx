@@ -144,7 +144,7 @@ export default function TabLayout() {
         name="menu"
         options={{
           title: "",
-          href: role === "Admin" ? "/menu" : null, // Only add href for admins
+          href: role === "admin" ? "/menu" : null, // Only add href for admins
           tabBarIcon: ({ color }) => (
             <View
               style={{
