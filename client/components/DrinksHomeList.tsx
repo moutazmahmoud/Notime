@@ -60,14 +60,16 @@ export default function DrinksHomeView({
 
   return (
     <View className="-mr-1 -ml-1">
-      <View style={styles.container} className={classes + ""}>
-        {title && (
-          <View className="">
-            <Text style={styles.title} className="text-2xl pl-1">
-              {title}
-            </Text>
-          </View>
-        )}
+      <View style={styles.container} className={classes}>
+        <Text>
+          {title && (
+            <View className="">
+              <Text style={styles.title} className="text-2xl pl-1">
+                {title}
+              </Text>
+            </View>
+          )}
+        </Text>
         <FlatList
           data={items}
           renderItem={renderDrinkItem}

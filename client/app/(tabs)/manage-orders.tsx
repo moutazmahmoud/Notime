@@ -15,10 +15,11 @@ import { MenuItem } from "./menu";
 
 type Order = {
   _id: string;
-  userId: string;
+  customerId: string;
   status: string;
   totalPrice: number;
-  orderDate: string;
+  orderDate: Date;
+
   items: { item: string; quantity: number }[];
 };
 
@@ -29,6 +30,7 @@ const ManageOrdersScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<string>("incoming");
+  const today = new Date();
 
   const { token } = useUser();
 
@@ -43,6 +45,7 @@ const ManageOrdersScreen: React.FC = () => {
           getMenuItems(token as string),
         ]);
         setOrders(ordersData);
+
         const userMap = usersData.reduce(
           (
             map: Record<string, string>,
@@ -54,6 +57,7 @@ const ManageOrdersScreen: React.FC = () => {
           {}
         );
         setUsers(userMap);
+        console.log("usersData", userMap);
 
         setMenuItems(menuItemsData);
       } catch (err) {
@@ -119,17 +123,47 @@ const ManageOrdersScreen: React.FC = () => {
       ))}
     </View>
   );
+  const isToday = (date: Date): boolean => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const formattedDate = (orderDate: Date | string): string => {
+    try {
+      const date = new Date(orderDate);
+      if (isNaN(date.getTime())) throw new Error("Invalid date");
+
+      return isToday(date)
+        ? `Today at ${date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}`
+        : date.toLocaleDateString([], {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+    } catch {
+      return "Invalid date";
+    }
+  };
 
   const renderOrderRow = ({ item }: { item: Order }) => (
     <View style={styles.orderCard}>
       <Text style={styles.orderInfo}>
-        <Text style={styles.bold}>User:</Text> {users[item.userId] || "Unknown"}
+        <Text style={styles.bold}>User:</Text>{" "}
+        {users[item.customerId] || "Unknown"}
       </Text>
       <Text style={styles.orderInfo}>
         <Text style={styles.bold}>Order ID:</Text> {item._id}
       </Text>
       <Text style={styles.orderInfo}>
-        <Text style={styles.bold}>Order Date:</Text> {item.orderDate}
+        <Text style={styles.bold}>Order Date:</Text>{" "}
+        {formattedDate(item.orderDate)}
       </Text>
       <Text style={styles.orderInfo}>
         <Text style={styles.bold}>Status:</Text> {item.status}

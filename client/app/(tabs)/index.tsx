@@ -121,6 +121,7 @@ export default function HomeScreen() {
             placeholder="Search for items"
             value={searchQuery}
             onChangeText={handleSearch}
+            onClearText={() => setSearchQuery("")}
           />
         </View>
 

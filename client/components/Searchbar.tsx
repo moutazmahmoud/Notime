@@ -1,16 +1,25 @@
-import React from 'react';
-import { View, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { AntDesign } from "@expo/vector-icons";
+import React from "react";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TextInputProps,
+  TouchableOpacity,
+} from "react-native";
 
 interface SearchBarProps extends TextInputProps {
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
+  onClearText: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
-  placeholder = 'Search...',
+  placeholder = "Search...",
   value,
   onChangeText,
+  onClearText,
   ...rest
 }) => {
   return (
@@ -22,15 +31,23 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onChangeText={onChangeText}
         {...rest}
       />
+      {value !== "" && (
+        <TouchableOpacity
+          onPress={onClearText}
+          className="absolute right-1 top-1/2 -translate-y-1/2"
+        >
+          <AntDesign name="close" size={16} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
     borderRadius: 10,
     paddingHorizontal: 0,
     marginVertical: 10,
@@ -39,9 +56,10 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
     paddingHorizontal: 12,
     paddingVertical: 8,
+    paddingRight: 40,
   },
 });
 
