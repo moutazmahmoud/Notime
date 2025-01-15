@@ -94,7 +94,7 @@ const MenuItemDetailsPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Back Button */}
-      <View className="flex-row justify-between items-center">
+      <View className="flex-row justify-between items-center mt-2">
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.backButton}
@@ -102,7 +102,7 @@ const MenuItemDetailsPage: React.FC = () => {
           <AntDesign name="left" size={20} color="#fff" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Menu Item Details</Text>
+        <Text style={styles.title}>Details</Text>
         <TouchableOpacity
           onPress={handleLikeMenuItem}
           style={styles.backButton}
@@ -119,18 +119,18 @@ const MenuItemDetailsPage: React.FC = () => {
       {/* Image Section */}
       <View className=" px-1">
         <Image
-          source={{ uri: `${API_URL_Image}${menuItem.image}` }} // Replace with your API URL
+          source={{ uri: `${API_URL_Image}${menuItem?.image}` }} // Replace with your API URL
           style={styles.image}
         />
       </View>
 
       {/* Details Section */}
       <View style={styles.detailsContainer}>
-        <Text style={styles.title}>{menuItem.name}</Text>
-        <Text style={styles.category}>{menuItem.category.name}</Text>
-        <Text style={styles.price}>${menuItem.basePrice.toFixed(2)}</Text>
+        <Text style={styles.title}>{menuItem?.name}</Text>
+        <Text style={styles.category}>{menuItem?.category.name}</Text>
+        <Text style={styles.price}>${menuItem?.basePrice.toFixed(2)}</Text>
         <Text style={styles.description}>
-          {menuItem.description || "No description available."}
+          {menuItem?.description || "No description available."}
         </Text>
 
         {/* Add to Cart Section */}
@@ -138,7 +138,13 @@ const MenuItemDetailsPage: React.FC = () => {
           style={styles.addToCartButton}
           onPress={() => {
             // Replace this with your add-to-cart logic
-            Alert.alert("Added to cart", `${menuItem.name} added to cart.`);
+            Alert.alert("Added to cart", `${menuItem?.name} added to cart.`);
+            Toast.show({
+              type: 'success',
+              text1: 'Added to cart',
+              text2: `${menuItem?.name} added to cart.`,
+              autoHide: true, // Manually control dismissal
+            });
           }}
         >
           <Text style={styles.addToCartText}>Add to Cart</Text>

@@ -59,13 +59,15 @@ export default function DrinksHomeView({
   };
 
   return (
-    <View className="-mr-1">
-      <View style={styles.container} className={classes}>
-        {/* {title && (
-        <Text style={styles.title} className="text-2xl">
-          {title}
-        </Text>
-      )} */}
+    <View className="-mr-1 -ml-1">
+      <View style={styles.container} className={classes + ""}>
+        {title && (
+          <View className="">
+            <Text style={styles.title} className="text-2xl pl-1">
+              {title}
+            </Text>
+          </View>
+        )}
         <FlatList
           data={items}
           renderItem={renderDrinkItem}
@@ -91,6 +93,7 @@ const styles = StyleSheet.create({
   },
   list: {
     marginTop: 8,
+    paddingLeft: 16,
   },
   card: {
     width: 150,

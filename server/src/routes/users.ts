@@ -21,7 +21,7 @@ router.post("/login", loginUser);
 
 router.put("/edit/:id", authToken, authorizeSelf(), editUser);
 
-router.delete("/:id", authToken, authorizeSelf(), editUser);
+router.delete("/:id", authToken, authorizeAdmin, editUser);
 
 router.post(
   "/:id/toggle-liked-item",
@@ -31,6 +31,6 @@ router.post(
 );
 
 // Admin-only
-router.get("/all",authToken, authorizeAdmin, getAllUsers);
+router.get("/all", authToken, authorizeAdmin, getAllUsers);
 
 export default router;

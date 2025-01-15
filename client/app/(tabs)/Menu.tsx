@@ -211,8 +211,6 @@ const styles = StyleSheet.create({
   actionButton: {
     padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
-    marginTop: 10,
   },
   editButton: {
     backgroundColor: "#2196F3",
@@ -226,8 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   addButton: {
-    alignSelf: "flex-start",
-    marginBottom: 15,
+    color: "#fff",
     backgroundColor: "#4CAF50",
   },
 });

@@ -77,3 +77,15 @@ export const toggleLikedMenuItem = async (
     throw new Error("Error toggling liked menu item: " + error.message);
   }
 };
+
+
+export const getAllUsers = async (token: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/all`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error fetching users: " + error.message);
+  }
+};  

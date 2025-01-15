@@ -11,6 +11,7 @@ export const createNewOrder = async (
     customerNotes?: string;
     customerId: string;
     esimatedCompletionTime?: Date;
+    orderDate: Date;
   }
 ) => {
   try {
@@ -49,5 +50,101 @@ export const getOrdersByUser = async (token: string, userId: string) => {
     return response.data;
   } catch (error) {
     throw new Error("Error getting orders: " + error.message);
+  }
+};
+
+export const getAllOrders = async (token: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error getting orders: " + error.message);
+  }
+};
+
+export const getOrderById = async (token: string, orderId: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/order/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error getting order: " + error.message);
+  }
+};
+
+export const updateOrder = async (
+  token: string,
+  orderId: string,
+  orderData: {
+    status?: string;
+    customerNotes?: string;
+    estimatedCompletionTime?: Date;
+  }
+) => {
+  try {
+    const response = await axios.put(`${API_URL}/order/${orderId}`, orderData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error updating order: " + error.message);
+  }
+};
+
+export const updateOrderStatus = async (
+  token: string,
+  orderId: string,
+  status: string
+) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/order/status/${orderId}`,
+      {
+        status,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Error updating order: " + error.message);
+  }
+};
+
+export const cancelOrder = async (token: string, orderId: string) => {
+  try {
+    const response = await axios.delete(`${API_URL}/order/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error canceling order: " + error.message);
+  }
+};
+
+export const deleteOrder = async (token: string, orderId: string) => {
+  try {
+    const response = await axios.delete(`${API_URL}/order/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error deleting order: " + error.message);
   }
 };

@@ -5,12 +5,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { UserProvider } from "../context/UserContext";
+import { UserProvider, useUser } from "../context/UserContext";
 import Toast from "react-native-toast-message";
 
 import "../global.css";
@@ -31,49 +31,47 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  const [fontsLoaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
+    ...FontAwesome.font, // Ensure FontAwesome is included here
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  // Handle splash screen visibility based on font loading state
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
-    return null;
+  if (!fontsLoaded) {
+    return null; // Return null while fonts are loading
   }
-
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const { colorScheme } = useColorScheme();
 
   return (
     <UserProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          <Stack.Screen
-            name="edit-menu-item/[id]"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="menu-item/[id]"
-            options={{ headerShown: false }}
-          />
-        </Stack>
-        <Toast config={toastConfig} />
-      </ThemeProvider>
+      <RootLayoutNav />
     </UserProvider>
   );
 }
+
+const RootLayoutNav = () => {
+  const { token } = useUser();
+  const isAuthenticated: boolean = !!token;
+  const { colorScheme } = useColorScheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login"); // Redirect to login if not authenticated
+      console.log("isAuthenticated from not:", isAuthenticated);
+    }
+    console.log("isAuthenticated:", isAuthenticated);
+  }, [isAuthenticated, router]);
+
+  return (
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Slot />
+      <Toast config={toastConfig} />
+    </ThemeProvider>
+  );
+};

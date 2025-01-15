@@ -76,8 +76,10 @@ const CartPage: React.FC = () => {
         totalPrice: totalPrice,
         customerNotes: "",
         customerId: userId as string,
+        orderDate: new Date(),
       });
-      if (!newOrder) {
+      console.log(newOrder);
+      if (newOrder) {
         handleNotification("success", "Your order has been placed!");
         clearCart();
       }

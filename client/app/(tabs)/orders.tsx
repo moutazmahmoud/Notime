@@ -8,10 +8,26 @@ import {
 } from "react-native";
 import { useUser } from "@/context/UserContext";
 import { getOrdersByUser } from "@/services/ordersService";
+import { getMenuItems } from "@/services/menuItemsService";
 import CountdownTimer from "@/components/CountdownTimer";
+import { MenuItem } from "./menu";
+
+interface Order {
+  _id: string;
+  status: string;
+  totalPrice: number;
+  items: { item: string; quantity: number }[];
+  customerNotes?: string;
+  customerId: string;
+  orderDate: Date;
+  preferredPickupTime?: Date;
+  cancelReason?: string;
+  estimatedCompletionTime?: string;
+}
 
 const MyOrdersScreen: React.FC = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<string>("incoming");
@@ -19,21 +35,26 @@ const MyOrdersScreen: React.FC = () => {
   const { token, userId } = useUser();
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchOrdersAndMenu = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getOrdersByUser(token as string, userId as string);
-        setOrders(data);
+        const [ordersData, menuData] = await Promise.all([
+          getOrdersByUser(token as string, userId as string),
+          getMenuItems(token as string),
+        ]);
+        setOrders(ordersData);
+        setMenuItems(menuData);
       } catch (err) {
-        console.error("Failed to fetch orders:", err);
-        setError("Failed to fetch orders. Please try again later.");
+        setError(
+          "Failed to fetch orders or menu items. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrders();
+    fetchOrdersAndMenu();
   }, [token, userId]);
 
   const filterOrders = (type: string) => {
@@ -68,20 +89,68 @@ const MyOrdersScreen: React.FC = () => {
     }
   };
 
-  const renderOrderItem = ({ item }: { item: any }) => (
-    <View style={[styles.orderItem, getStatusStyle(item.status)]} key={item._id}>
-      <Text style={styles.orderText}>Order ID: {item.id}</Text>
-      <Text style={styles.orderText}>Status: {item.status}</Text>
-      <Text style={styles.orderText}>Total: ${item.totalPrice.toFixed(2)}</Text>
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long", // Use 'short' for abbreviated month names
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
+
+  const renderOrderItem = ({ item }: { item: Order }) => (
+    <View
+      style={[styles.orderItem, getStatusStyle(item.status)]}
+      key={item._id}
+    >
+      {/* <Text style={styles.orderText}>Order ID: {item._id}</Text> */}
+      <Text style={styles.itemsHeader}>Status: {item.status}</Text>
+
+      <Text style={styles.itemsHeader}>
+        Order Date: {formatDate(item.orderDate.toString())}
+      </Text>
+
       {item.status === "inprogress" && item.estimatedCompletionTime && (
-        <>
+        <View>
           <Text style={styles.orderText}>
             Estimated Completion Time:{" "}
             {new Date(item.estimatedCompletionTime).toLocaleTimeString()}
           </Text>
-          <CountdownTimer estimatedCompletionTime={item.estimatedCompletionTime} />
-        </>
+          <CountdownTimer
+            estimatedCompletionTime={item.estimatedCompletionTime}
+          />
+        </View>
       )}
+
+      <Text style={styles.itemsHeader}>Items:</Text>
+      <View style={styles.table}>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableHeader}>Item</Text>
+          <Text style={styles.tableHeaderMedium}>Quantity</Text>
+          <Text style={styles.tableHeaderMedium}>Price</Text>
+          <Text style={styles.tableHeaderMedium} className="flex-1" >Item Total</Text>
+        </View>
+        {item.items.map((orderItem) => {
+          const menuItem = menuItems.find(
+            (menuItem) => menuItem._id === orderItem.item
+          );
+          return (
+            <View style={styles.tableRow} key={orderItem.item}>
+              <Text style={styles.tableCell}>
+                {menuItem?.name || "Unknown Item"}
+              </Text>
+              <Text style={styles.smallCell}>{orderItem.quantity}</Text>
+              <Text style={styles.smallCell}>${menuItem?.basePrice}</Text>
+              <Text style={styles.smallCell} className="flex-1">
+                ${orderItem.quantity * menuItem!.basePrice}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+      <Text style={styles.orderText} className="mt-0.5 text-right w-full">Total: ${item.totalPrice.toFixed(2)}</Text>
     </View>
   );
 
@@ -106,7 +175,6 @@ const MyOrdersScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>My Orders</Text>
-
       <View style={styles.sliderBar}>
         <TouchableOpacity
           style={[
@@ -216,6 +284,54 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     color: "#E53935",
+    textAlign: "center",
+  },
+  itemsHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 5,
+    color: "#333",
+  },
+  table: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 4,
+    overflow: "hidden",
+    width: "100%",
+  },
+  tableRow: {
+    flexDirection: "row",
+  },
+  tableHeaderRow: {
+    backgroundColor: "#f0f0f0",
+  },
+  tableCell: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    minWidth: 100, // Ensures cells align even with scrolling
+    maxWidth: 100,
+    textAlign: "center",
+  },
+  smallCell: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    minWidth: 70, // Ensures cells align even with scrolling
+    textAlign: "center",
+  },
+  tableHeader: {
+    fontWeight: "bold",
+    minWidth: 100,
+    maxWidth: 100,
+    textAlign: "center",
+    padding: 8,
+  },
+  tableHeaderMedium: {
+    fontWeight: "bold",
+    minWidth: 70,
+    padding: 2,
+    paddingVertical: 8,
     textAlign: "center",
   },
 });

@@ -120,7 +120,7 @@ const AddMenuItemPage: React.FC = () => {
     <View style={styles.container}>
       <ScrollView>
         <BackButton onPress={() => router.back()} />
-        <Text style={styles.title} className="mt-6">
+        <Text style={styles.title} className="mt-2">
           Add Menu Item
         </Text>
         <TextInput

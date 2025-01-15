@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
-import { Link, Tabs } from "expo-router";
+import {
+  Link,
+  Tabs,
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 import { useColorScheme } from "nativewind";
 import Colors from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -8,6 +14,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useUser } from "../../context/UserContext"; // Import the user context
+import { useRoute } from "@react-navigation/native";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof AntDesign>["name"];
@@ -35,8 +42,31 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
-  const { role } = useUser(); // Access username and systemAvatar using the hook
+  const { role, token } = useUser(); // Access username and systemAvatar using the hook
   console.log("role:", role);
+  const isAuthenticated = token || false;
+  const [ready, setReady] = useState(false);
+  const router = useRouter(); // To programmatically navigate
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Wait for the layout to fully mount before checking authentication
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Handle navigation based on authentication status
+  useEffect(() => {
+    if (isMounted && typeof isAuthenticated === "boolean") {
+      if (!isAuthenticated) {
+        router.replace("/login"); // Redirect to login if unauthenticated
+      }
+    }
+  }, [isAuthenticated, isMounted, router]);
+
+  if (!isMounted) {
+    // Prevent rendering anything until the layout is mounted
+    return null;
+  }
 
   return (
     <Tabs
@@ -101,6 +131,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="manage-orders"
+        options={{
+          href: role === "admin" ? "/manage-orders" : null, // Only add href for admins
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="profile" color={color} label="Manage Orders" />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="favorites"
         options={{
           title: "",
@@ -121,25 +161,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: "",
-          tabBarIcon: ({ color }) => (
-            <View
-              style={{
-                alignItems: "center",
-                flexDirection: "column",
-                justifyContent: "center",
-                marginTop: 0,
-                flex: 1,
-              }}
-            >
-              <Ionicons name="notifications" size={20} color={color} />
-            </View>
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="menu"
         options={{
@@ -152,21 +174,12 @@ export default function TabLayout() {
                 flexDirection: "column",
                 justifyContent: "center",
                 marginTop: 0,
-                // gap: 5,
                 flex: 1,
               }}
             >
               <MaterialIcons name="menu" size={20} color={color} />
             </View>
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="register"
-        options={{
-          tabBarStyle: { display: "none" },
-          title: "",
-          href: null,
         }}
       />
       <Tabs.Screen
@@ -187,17 +200,46 @@ export default function TabLayout() {
           href: null,
         }}
       />
-
       <Tabs.Screen
-        name="login"
+        name="add-menu-item"
         options={{
           tabBarStyle: { display: "none" },
           title: "",
           href: null,
         }}
       />
+
       <Tabs.Screen
-        name="add-menu-item"
+        name="notifications"
+        options={{
+          href: null,
+          title: "",
+          tabBarIcon: ({ color }) => (
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                marginTop: 0,
+                flex: 1,
+              }}
+            >
+              <Ionicons name="notifications" size={20} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="register"
+        options={{
+          tabBarStyle: { display: "none" },
+          title: "",
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="login"
         options={{
           tabBarStyle: { display: "none" },
           title: "",

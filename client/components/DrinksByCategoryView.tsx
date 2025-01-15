@@ -53,13 +53,7 @@ export default function DrinksByCategoryView({ items }: { items: MenuItem[] }) {
   return (
     <View style={styles.container}>
       <Text
-        style={{
-          fontSize: 20,
-          fontWeight: "bold",
-          color: "#333",
-          marginBottom: 8,
-          marginTop: 8,
-        }}
+        className="text-black text-2xl font-bold mb-1 mt-1"
       >
         Filter by Category
       </Text>
@@ -69,6 +63,7 @@ export default function DrinksByCategoryView({ items }: { items: MenuItem[] }) {
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
+        className="-mx-1"
         contentContainerStyle={styles.categoryList}
       />
       <DrinksHomeView items={filteredItems} title="" />
@@ -83,6 +78,7 @@ const styles = StyleSheet.create({
   },
   categoryList: {
     marginVertical: 10,
+    paddingLeft: 16,
   },
   categoryButton: {
     padding: 10,
