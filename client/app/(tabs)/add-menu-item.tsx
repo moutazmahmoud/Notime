@@ -32,7 +32,6 @@ const AddMenuItemPage: React.FC = () => {
   const handlePickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-    console.log("Permission Result:", permissionResult);
 
     if (!permissionResult.granted) {
       Alert.alert(
@@ -46,7 +45,6 @@ const AddMenuItemPage: React.FC = () => {
       allowsEditing: true,
       quality: 1,
     });
-    console.log("Image Picker Result:", result);
 
     if (result.canceled || !result.assets || !result.assets[0]) {
       Alert.alert("No image selected", "Please select an image to continue.");
@@ -54,7 +52,6 @@ const AddMenuItemPage: React.FC = () => {
     }
 
     const { uri } = result.assets[0];
-    console.log("Selected Image URI:", uri);
     setImageUri(uri);
   };
 

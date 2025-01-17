@@ -57,7 +57,6 @@ const ManageOrdersScreen: React.FC = () => {
           {}
         );
         setUsers(userMap);
-        console.log("usersData", userMap);
 
         setMenuItems(menuItemsData);
       } catch (err) {
@@ -88,10 +87,7 @@ const ManageOrdersScreen: React.FC = () => {
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      console.log("token:", token);
-      console.log("orderId:", orderId);
-      console.log("newStatus:", newStatus);
-
+     
       const updatedOrder = await updateOrderStatus(
         token as string,
         orderId,

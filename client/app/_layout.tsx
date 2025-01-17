@@ -63,9 +63,7 @@ const RootLayoutNav = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login"); // Redirect to login if not authenticated
-      console.log("isAuthenticated from not:", isAuthenticated);
     }
-    console.log("isAuthenticated:", isAuthenticated);
   }, [isAuthenticated, router]);
 
   return (

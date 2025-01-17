@@ -39,8 +39,6 @@ const Login = () => {
     setLoading(true);
     try {
       const { user, token, id } = await login(email, password);
-      console.log("user:", user);
-      console.log("userId:", user.id);
       // Update user data in context
       setUser({
         username: user.username,

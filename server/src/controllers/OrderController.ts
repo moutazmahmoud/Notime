@@ -93,7 +93,6 @@ export const updateOrderStatus = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("updateOrderStatus:", req.params.orderId);
   try {
     const order = await Order.findById(req.params.orderId);
     if (!order) {

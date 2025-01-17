@@ -37,16 +37,13 @@ export const createNewOrder = async (
 
 export const getOrdersByUser = async (token: string, userId: string) => {
   try {
-    console.log("Getting orders for user:", userId);
-    console.log("Token:", token);
-    console.log("url", `${API_URL}/user-orders/${userId}`);
+ 
 
     const response = await axios.get(`${API_URL}/user-orders/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Response from server:", response);
     return response.data;
   } catch (error) {
     throw new Error("Error getting orders: " + error.message);

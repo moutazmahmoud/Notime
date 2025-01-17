@@ -43,7 +43,6 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
   const { role, token } = useUser(); // Access username and systemAvatar using the hook
-  console.log("role:", role);
   const isAuthenticated = token || false;
   const [ready, setReady] = useState(false);
   const router = useRouter(); // To programmatically navigate

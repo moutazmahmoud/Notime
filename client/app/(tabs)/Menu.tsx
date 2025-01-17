@@ -39,7 +39,6 @@ const MenuPage: React.FC = () => {
     try {
       const items = await getMenuItems(token || "");
       setMenuItems(items);
-      console.log("items:", items);
     } catch (err) {
       setError("Failed to fetch menu items.");
     } finally {
@@ -52,8 +51,6 @@ const MenuPage: React.FC = () => {
   // Handle edit operation (navigate to edit page)
   const handleEdit = (itemId: string) => {
     router.push(`/edit-menu-item/${itemId}`); // Navigating to the EditMenuItemPage with itemId
-    console.log("router.push:", router.push);
-    console.log("id:", itemId);
   };
 
   // Handle delete operation

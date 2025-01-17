@@ -38,7 +38,6 @@ export const editUser = async (id: string, updates: object, token: string) => {
     const response = await axios.put(`${API_URL}/edit/${id}`, updates, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("response:", response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to update user");
@@ -93,7 +92,6 @@ export const getAllUsers = async (token: string) => {
 export const sendResetPasswordEmail = async (email: string) => {
   try {
     const response = await axios.post(`${API_URL}/reset-password`, { email });
-    console.log("response:", response.status);
     if (response.status === 200) {
       handleNotification("success", "Reset password email sent");
       return response.data;
@@ -130,7 +128,6 @@ export const setNewPasswordWithCode = async (
       newPassword,
       email,
     });
-    console.log("setNewPasswordWithCode response:", res);
     return res.status;
   } catch (error) {
     throw new Error("Error setting new password: " + error.message);

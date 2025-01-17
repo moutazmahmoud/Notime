@@ -44,7 +44,6 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const res = await sendResetPasswordEmail(email);
-      console.log("res:", res);
 
       // Show the code input modal after email is sent
       setCodeModalVisible(true);
@@ -83,7 +82,6 @@ const ForgotPassword = () => {
       const res = await setNewPasswordWithCode(code, newPassword, email);
       if (res === 200) {
         // Reset password logic (send to backend)
-        console.log("New password:", newPassword);
         setNewPasswordModalVisible(false);
         Alert.alert("Success", "Your password has been reset.");
         router.push("/login"); // Redirect to login screen after resetting password
@@ -93,7 +91,6 @@ const ForgotPassword = () => {
       handleNotification("error", "Error resetting password");
     }
     // Reset password logic (send to backend)
-    console.log("New password:", newPassword);
     setNewPasswordModalVisible(false);
     handleNotification("success", "Your password has been reset");
     Alert.alert("Success", "Your password has been reset.");

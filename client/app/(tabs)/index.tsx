@@ -26,10 +26,8 @@ export default function HomeScreen() {
     const fetchMenuItems = async () => {
       try {
         const items = await getMenuItems(token || "");
-        console.log("token", token);
-        console.log("items:", items);
+      
         setUser({ menuItems: items });
-        console.log("items: from home", items);
       } catch (err) {
         setError("Failed to fetch menu items.");
       } finally {

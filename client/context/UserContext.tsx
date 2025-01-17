@@ -75,9 +75,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addToCart = (item: MenuItem, quantity: number = 1) => {
     setUser((prevUser: Partial<UserContextType>) => {
-      console.log("addToCart:", prevUser);
-      console.log("addToCart:", item);
-      console.log("addToCart:", quantity);
+    
       const cart = prevUser.cart || [];
       const existingItem = cart.find((cartItem) => cartItem._id === item._id);
 

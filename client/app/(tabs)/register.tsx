@@ -57,7 +57,7 @@ const Register = () => {
         "Please enter a valid phone number (10-15 digits)."
       );
       handleNotification("error", "Invalid Phone Number");
-      console.log("Invalid Phone Number");
+      
       return;
     }
 
@@ -70,15 +70,15 @@ const Register = () => {
         "success",
         "Your account has been successfully created. Start exploring now!"
       );
-      console.log(userData);
+      
       router.replace("/login");
 
-      console.log("registration successful");
-      console.log(userData);
-      console.log(res);
+      
+      
+      
     } catch (error) {
       Alert.alert("Error", "Something went wrong");
-      console.log(error);
+      
     } finally {
       setLoading(false);
     }

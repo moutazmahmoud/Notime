@@ -52,7 +52,6 @@ const ProfileScreen: React.FC = () => {
       Alert.alert("Error", "Name and Email cannot be empty");
       return;
     }
-    console.log("userId:", userId);
     setLoading(true);
     try {
       const updates = {
@@ -61,7 +60,6 @@ const ProfileScreen: React.FC = () => {
         systemAvatar: selectedAvatar,
       };
       const updatedUser = await editUser(userId, updates, token);
-      console.log("updatedUserfromprofile:", updatedUser.user);
       setUser(updatedUser.user);
       setIsEditing(false);
       Alert.alert(
