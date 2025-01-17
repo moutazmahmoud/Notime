@@ -1,12 +1,70 @@
-import { StatusBar } from "expo-status-bar";
-import { Platform, Text, View } from "react-native";
+import React from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 
-export default function ModalScreen() {
-  return (
-    <View className="flex-1 items-center justify-center bg-white dark:bg-black">
-      <Text className="text-xl font-bold text-dark dark:text-white">Modal</Text>
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-    </View>
-  );
+interface ModalScreenProps {
+  isVisible: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
 }
+
+const ModalScreen: React.FC<ModalScreenProps> = ({
+  isVisible,
+  onClose,
+  children,
+}) => {
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={isVisible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.closeButton}
+          >
+            <Text style={styles.closeText}>X</Text>
+          </TouchableOpacity>
+          {children}
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+    marginBottom: 10,
+  },
+  closeText: {
+    fontSize: 16,
+    color: "gray",
+  },
+});
+export default ModalScreen;

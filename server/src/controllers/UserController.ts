@@ -2,6 +2,8 @@ import { Request, RequestHandler, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../utils/nodemailer";
+import crypto from "crypto";
 
 // Get all users (Admin-only functionality)
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -179,11 +181,6 @@ export const getUserById: RequestHandler = async (req, res) => {
   }
 };
 
-// Additional Controllers to Consider:
-// - Reset Password: Generate a token and send it to the user's email for resetting the password.
-// - Promote User Role: Allow admin to promote/demote user roles (e.g., "customer" to "admin").
-// - Deactivate User: Temporarily disable a user's account instead of deleting it.
-
 export const toggleLikedMenuItem: RequestHandler = async (req, res) => {
   const { menuItemId } = req.body as { menuItemId: string };
   const { id } = req.params;
@@ -233,5 +230,151 @@ export const toggleLikedMenuItem: RequestHandler = async (req, res) => {
     res.status(500).json({
       message: "Failed to toggle liked menu item",
     });
+  }
+};
+
+export const sendResetCode: RequestHandler = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    // Generate a 4-digit reset code
+    const resetCode = crypto.randomInt(1000, 9999).toString();
+    const resetCodeExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    user.resetCode = resetCode;
+    user.resetCodeExpiry = resetCodeExpiry;
+    await user.save();
+
+    // Simulate email sending (replace with an email service)
+    console.log(`Reset code for ${email}: ${resetCode}`);
+    sendEmail(email, "Reset Password", `Reset code: ${resetCode}`);
+
+    res.status(200).json({ message: "Reset code sent to email." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to send reset code.", error });
+  }
+};
+
+export const validateResetCode: RequestHandler = async (req, res) => {
+  const { email, resetCode } = req.body;
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(400).json({ message: "User not found." });
+      return;
+    }
+
+    // Validate reset code and expiry
+    if (!user.resetCode || user.resetCode !== resetCode) {
+      res.status(400).json({ message: "Invalid or expired reset code." });
+      return;
+    }
+
+    if (user.resetCodeExpiry && new Date() > user.resetCodeExpiry) {
+      res
+        .status(400)
+        .json({ message: "Reset code has expired. Please request a new one." });
+      return;
+    }
+
+    // Success response
+    res.status(200).json({ message: "Reset code is valid." });
+    return;
+  } catch (error) {
+    console.error("Error validating reset code:", error);
+    res.status(500).json({ message: "Failed to validate reset code.", error });
+    return;
+  }
+};
+
+export const setNewPasswordWithCode: RequestHandler = async (req, res) => {
+  const { email, newPassword, resetCode } = req.body;
+
+  console.log("Received request to set new password:", { email, resetCode });
+
+  // // Validate the new password (e.g., minimum length, complexity)
+  // if (!newPassword ) {
+  //   console.log("Password validation failed. Password is too short.");
+  //   res
+  //     .status(400)
+  //     .json({ message: "Password must be at least 8 characters long." });
+  //   return;
+  // }
+  console.log("Password validation passed.");
+
+  try {
+    console.log("Searching for user with email:", email);
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      console.log("User not found:", email);
+      res.status(404).json({ message: "User not found." });
+      return;
+    }
+    console.log("User found:", user);
+
+    if (!user.resetCode) {
+      console.log("No reset code available for user:", email);
+      res
+        .status(400)
+        .json({ message: "Reset code not requested or already used." });
+      return;
+    }
+    console.log("Reset code found for user:", email);
+
+    if (user.resetCode !== resetCode) {
+      console.log("Invalid reset code for user:", email);
+      res
+        .status(400)
+        .json({ message: "Invalid reset code. Please check and try again." });
+      return;
+    }
+    console.log("Reset code matched.");
+
+    // Safely check if resetCodeExpiry exists before comparing it
+    if (user.resetCodeExpiry && user.resetCodeExpiry < new Date()) {
+      console.log("Reset code has expired for user:", email);
+      res
+        .status(400)
+        .json({ message: "Reset code has expired. Please request a new one." });
+      return;
+    }
+    console.log("Reset code is still valid.");
+
+    // Hash the new password
+    console.log("Hashing the new password for user:", email);
+    let hashedPassword;
+    try {
+      hashedPassword = await bcrypt.hash(newPassword, 10);
+      console.log("Password hashed successfully.");
+    } catch (hashError) {
+      console.error("Error hashing the password for user:", email, hashError);
+      res
+        .status(500)
+        .json({ message: "Error hashing the password.", error: hashError });
+      return;
+    }
+
+    // Update user password and clear reset fields
+    console.log("Updating user password for:", email);
+    user.password = hashedPassword;
+    user.resetCode = undefined;
+    user.resetCodeExpiry = undefined;
+    await user.save();
+
+    console.log("Password updated successfully for user:", email);
+    res.status(200).json({ message: "Password updated successfully." });
+  } catch (error) {
+    console.error("Failed to update password for user:", email, error);
+    res.status(500).json({ message: "Failed to update password.", error });
   }
 };

@@ -5,7 +5,7 @@ const toastConfig: Record<string, (props: any) => JSX.Element> = {
   success: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: "#4CAF50", backgroundColor: "#E8F5E9" }}
+      style={{ borderLeftColor: "#4CAF50", backgroundColor: "#E8F5E9" , zIndex: 1000}}
       text1Style={{
         fontSize: 16,
         fontWeight: "bold",

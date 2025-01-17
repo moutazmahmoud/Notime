@@ -5,7 +5,10 @@ import {
   getAllUsers,
   loginUser,
   registerUser,
+  sendResetCode,
+  setNewPasswordWithCode,
   toggleLikedMenuItem,
+  validateResetCode,
 } from "../controllers/UserController";
 import { authToken } from "../middlewares/authToken";
 import { authorizeAdmin } from "../middlewares/authorizeAdmin";
@@ -17,11 +20,17 @@ const router = express.Router();
 router.post("/register", registerUser);
 
 // Login route
-router.post("/login", loginUser);
+router.post("/login", loginUser); // Login user
 
-router.put("/edit/:id", authToken, authorizeSelf(), editUser);
+router.post("/reset-password", sendResetCode); // Send reset password email
 
-router.delete("/:id", authToken, authorizeAdmin, editUser);
+router.post("/reset-password/validate", validateResetCode); // Validate reset code
+
+router.post("/reset-password/set-new-password", setNewPasswordWithCode); // Set new password
+
+router.put("/edit/:id", authToken, authorizeSelf(), editUser); // Update user details
+
+router.delete("/:id", authToken, authorizeAdmin, editUser); // Delete user
 
 router.post(
   "/:id/toggle-liked-item",

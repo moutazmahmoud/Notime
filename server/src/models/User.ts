@@ -20,6 +20,8 @@ interface UserDocument extends Document {
     | "90"
     | "100";
   likedMenuItems?: string[];
+  resetCode?: string;
+  resetCodeExpiry?: Date;
 }
 
 // Predefined avatar values
@@ -52,6 +54,8 @@ const UserSchema = new Schema(
     role: { type: String, enum: ["admin", "customer"], default: "customer" },
     systemAvatar: { type: String, enum: avatarOptions }, // Predefined avatar values
     likedMenuItems: [{ type: Schema.Types.ObjectId, ref: "MenuItem" }],
+    resetCode: String,
+    resetCodeExpiry: Date,
   },
   { timestamps: true }
 );

@@ -1,4 +1,3 @@
-// screens/Login.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -7,8 +6,14 @@ import {
   Text,
   Alert,
   TouchableOpacity,
+  Modal,
+  StyleSheet,
 } from "react-native";
-import { login } from "../../services/authService";
+import {
+  sendResetPasswordEmail,
+  validateResetCode,
+  setNewPasswordWithCode,
+} from "../../services/authService";
 import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
 import { handleNotification, isValidEmail } from "@/lib/utils";
@@ -17,15 +22,17 @@ import { AntDesign } from "@expo/vector-icons";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [codeModalVisible, setCodeModalVisible] = useState(false);
+  const [newPasswordModalVisible, setNewPasswordModalVisible] = useState(false);
+  const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
-  
-  const handleForgotPassword = async () => {
+  const handleSendResetCode = async () => {
     if (!email) {
       Alert.alert("Missing Fields", "Please fill out this email field.");
       handleNotification("error", "Missing Fields");
       return;
     }
-
 
     // Validate email format
     if (!isValidEmail(email)) {
@@ -36,55 +43,242 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      // todo handle forgot password
-      console.log("Forgot Password ");
+      const res = await sendResetPasswordEmail(email);
+      console.log("res:", res);
+
+      // Show the code input modal after email is sent
+      setCodeModalVisible(true);
     } catch (error) {
       Alert.alert("Error", error?.message);
+      handleNotification("error", "Error sending reset password email");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleVerifyCode = async () => {
+    if (code.length === 4) {
+      try {
+        const res = await validateResetCode(code, email);
+        if (res === 200) {
+          // If the code is correct, show the new password modal
+          setCodeModalVisible(false);
+          setNewPasswordModalVisible(true);
+        }
+      } catch (error) {
+        Alert.alert("Error", error?.message);
+        handleNotification("error", "Error validating reset code");
+      }
+    } else {
+      Alert.alert("Invalid Code", "Please enter a valid 4-digit code.");
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword) {
+      Alert.alert("Missing Password", "Please enter a new password.");
+      return;
+    }
+    try {
+      const res = await setNewPasswordWithCode(code, newPassword, email);
+      if (res === 200) {
+        // Reset password logic (send to backend)
+        console.log("New password:", newPassword);
+        setNewPasswordModalVisible(false);
+        Alert.alert("Success", "Your password has been reset.");
+        router.push("/login"); // Redirect to login screen after resetting password
+      }
+    } catch (error) {
+      Alert.alert("Error", error?.message);
+      handleNotification("error", "Error resetting password");
+    }
+    // Reset password logic (send to backend)
+    console.log("New password:", newPassword);
+    setNewPasswordModalVisible(false);
+    handleNotification("success", "Your password has been reset");
+    Alert.alert("Success", "Your password has been reset.");
+    router.push("/login"); // Redirect to login screen after resetting password
+  };
+
   return (
-    <View className="bg-white flex-1 flex-col p-4">
-      <TouchableOpacity
-        onPress={() => router.back()}
-        className="bg-primary-10 p-4 rounded-lg w-10 h-10 flex-row justify-center items-center"
-      >
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <AntDesign name="left" size={20} color="#fff" />
       </TouchableOpacity>
-      <Text className="text-2xl  mt-10 text-bold">Forgot Password</Text>
-      <Text className="text-l mt-10" style={{ color: "#A3A3A3" }}>
+
+      <Text style={styles.title}>Forgot Password</Text>
+      <Text style={styles.subtitle}>
         Enter the email address registered with your account. We'll send you a
-        link to reset your password.
+        code to reset your password.
       </Text>
-      <View className="flex-col mt-10 items-center justify-center">
-        <LabeledTextInput
-          label="Email"
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={setEmail}
-        />
-        <TouchableOpacity
-          className="w-full mt-10 rounded-lg bg-primary-10"
-          onPress={handleForgotPassword}
-        >
-          <Text className="w-full text-center px-2 py-2 rounded-2 text-white">
-            {loading ? "Loading..." : "Send Email"}
-          </Text>
+
+      <LabeledTextInput
+        label="Email"
+        value={email}
+        placeholder="Enter your email"
+        onChangeText={setEmail}
+      />
+
+      <TouchableOpacity style={styles.sendButton} onPress={handleSendResetCode}>
+        <Text style={styles.sendButtonText}>
+          {loading ? "Loading..." : "Send Email"}
+        </Text>
+      </TouchableOpacity>
+
+      <View style={styles.loginLink}>
+        <Text>Remembered password? </Text>
+        <TouchableOpacity onPress={() => router.push("/login")}>
+          <Text style={styles.loginText}>Login to your account</Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center mt-4">
-          <Text className="">Remembered password? </Text>
-          <TouchableOpacity
-            className="text-primary"
-            onPress={() => router.push("/login")}
-          >
-            <Text className="text-primary-10">Login to your account</Text>
-          </TouchableOpacity>
-        </View>
       </View>
+
+      {/* Modal for code input */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={codeModalVisible}
+        onRequestClose={() => setCodeModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Enter 4-Digit Code</Text>
+            <TextInput
+              style={styles.input}
+              value={code}
+              onChangeText={setCode}
+              keyboardType="numeric"
+              maxLength={4}
+              placeholder="Enter code"
+            />
+
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={handleVerifyCode}
+            >
+              <Text style={styles.closeText}>Verify</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setCodeModalVisible(false)}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal for new password */}
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={newPasswordModalVisible}
+        onRequestClose={() => setNewPasswordModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Enter New Password</Text>
+            <TextInput
+              style={styles.input}
+              value={newPassword}
+              onChangeText={setNewPassword}
+              secureTextEntry
+              placeholder="Enter new password"
+            />
+
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={handleResetPassword}
+            >
+              <Text style={styles.closeText}>Reset Password</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setNewPasswordModalVisible(false)}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "white",
+  },
+  backButton: {
+    padding: 10,
+    backgroundColor: "#007BFF",
+    borderRadius: 50,
+    alignSelf: "flex-start",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#A3A3A3",
+    marginBottom: 20,
+  },
+  sendButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  sendButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  loginLink: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 15,
+  },
+  loginText: {
+    color: "#007BFF",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    width: "100%",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  closeModalButton: {
+    marginTop: 20,
+  },
+  closeText: {
+    color: "#007BFF",
+  },
+});
 
 export default ForgotPassword;

@@ -124,6 +124,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="orders"
         options={{
+          href: role === "customer" ? "/orders" : null, // Only add href for admins
           title: "",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="profile" color={color} label="My Orders" />

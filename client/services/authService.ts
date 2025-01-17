@@ -1,3 +1,4 @@
+import { handleNotification } from "@/lib/utils";
 import axios from "axios";
 
 const API_URL = "http://192.168.1.101:4000/auth";
@@ -56,7 +57,6 @@ export const deleteUser = async (id: string, token: string) => {
   }
 };
 
-
 export const toggleLikedMenuItem = async (
   token: string,
   userId: string,
@@ -78,7 +78,6 @@ export const toggleLikedMenuItem = async (
   }
 };
 
-
 export const getAllUsers = async (token: string) => {
   try {
     const response = await axios.get(`${API_URL}/all`, {
@@ -88,4 +87,52 @@ export const getAllUsers = async (token: string) => {
   } catch (error) {
     throw new Error("Error fetching users: " + error.message);
   }
-};  
+};
+
+// Send reset password email
+export const sendResetPasswordEmail = async (email: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/reset-password`, { email });
+    console.log("response:", response.status);
+    if (response.status === 200) {
+      handleNotification("success", "Reset password email sent");
+      return response.data;
+    } else {
+      throw new Error("Error sending reset password email: " + response.status);
+    }
+  } catch (error) {
+    throw new Error("Error sending reset password email: " + error.message);
+  }
+};
+
+// Validate reset code
+export const validateResetCode = async (resetCode: string, email: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/reset-password/validate`, {
+      resetCode,
+      email,
+    });
+    return response.status;
+  } catch (error) {
+    throw new Error("Error validating reset code: " + error.message);
+  }
+};
+
+// Set new password
+export const setNewPasswordWithCode = async (
+  resetCode: string,
+  newPassword: string,
+  email: string
+) => {
+  try {
+    const res = await axios.post(`${API_URL}/reset-password/set-new-password`, {
+      resetCode,
+      newPassword,
+      email,
+    });
+    console.log("setNewPasswordWithCode response:", res);
+    return res.status;
+  } catch (error) {
+    throw new Error("Error setting new password: " + error.message);
+  }
+};

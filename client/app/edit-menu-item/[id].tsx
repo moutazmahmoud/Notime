@@ -81,7 +81,6 @@ const EditMenuItemPage: React.FC = () => {
 
     if (!result.canceled && result.assets && result.assets[0]) {
       const selectedImageUri = result.assets[0].uri;
-      console.log("selectedImageUri", selectedImageUri);
 
       setImageUri(selectedImageUri); // This updates the preview image
       setHasChanges(true);
@@ -97,20 +96,14 @@ const EditMenuItemPage: React.FC = () => {
   };
 
   const handleUpdate = async () => {
-    console.log("handleUpdate called");
 
     if (!name || !category || !basePrice) {
-      console.log("Validation failed: Missing required fields", {
-        name,
-        category,
-        basePrice,
-      });
+      
       Alert.alert("Error", "Please fill in all required fields.");
       return;
     }
 
     try {
-      console.log("Preparing form data...");
       const formData: FormData = new FormData();
       formData.append("name", name);
       formData.append("description", description);
@@ -121,18 +114,15 @@ const EditMenuItemPage: React.FC = () => {
       // Only add the image to formData if it was changed
       if (imageUri !== originalImage) {
         if (imageUri) {
-          console.log("Adding new image to formData", { imageUri });
 
           let imageFile: File;
 
           if (Platform.OS === "web") {
-            console.log("Platform is web. Fetching image data...");
             const response = await fetch(imageUri);
             const blob = await response.blob();
             const fileName = imageUri.split("/").pop() || "image.jpg";
             imageFile = new File([blob], fileName, { type: blob.type });
           } else {
-            console.log("Platform is native. Preparing file...");
             const fileName = imageUri.split("/").pop() || "image.jpg";
             const mimeType = "image/jpeg"; // Update MIME type if needed
             const response = await fetch(imageUri);
@@ -142,18 +132,13 @@ const EditMenuItemPage: React.FC = () => {
 
           formData.append("image", imageFile);
         } else {
-          console.log("User removed the image. Indicating image removal.");
           formData.append("image", "");
         }
       } else {
-        console.log("Image not changed. Skipping image upload.");
       }
 
-      console.log("Form data prepared:", formData);
 
-      console.log("Sending update request...");
       await updateMenuItem(id as string, formData);
-      console.log("Update successful. Redirecting to menu page.");
       Alert.alert("Success", "Menu item updated successfully!");
       router.push("/menu");
     } catch (err) {
