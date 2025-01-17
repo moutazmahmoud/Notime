@@ -118,30 +118,35 @@ const EditMenuItemPage: React.FC = () => {
       formData.append("basePrice", basePrice);
       formData.append("customizations", "");
 
-      if (imageUri) {
-        console.log("Adding image to formData", { imageUri });
+      // Only add the image to formData if it was changed
+      if (imageUri !== originalImage) {
+        if (imageUri) {
+          console.log("Adding new image to formData", { imageUri });
 
-        let imageFile: File;
+          let imageFile: File;
 
-        if (Platform.OS === "web") {
-          console.log("Platform is web. Fetching image data...");
-          const response = await fetch(imageUri);
-          const blob = await response.blob();
-          const fileName = imageUri.split("/").pop() || "image.jpg";
-          imageFile = new File([blob], fileName, { type: blob.type });
+          if (Platform.OS === "web") {
+            console.log("Platform is web. Fetching image data...");
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+            const fileName = imageUri.split("/").pop() || "image.jpg";
+            imageFile = new File([blob], fileName, { type: blob.type });
+          } else {
+            console.log("Platform is native. Preparing file...");
+            const fileName = imageUri.split("/").pop() || "image.jpg";
+            const mimeType = "image/jpeg"; // Update MIME type if needed
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+            imageFile = new File([blob], fileName, { type: mimeType });
+          }
+
+          formData.append("image", imageFile);
         } else {
-          console.log("Platform is native. Preparing file...");
-          const fileName = imageUri.split("/").pop() || "image.jpg";
-          const mimeType = "image/jpeg"; // Update MIME type if needed
-          const response = await fetch(imageUri);
-          const blob = await response.blob();
-          imageFile = new File([blob], fileName, { type: mimeType });
+          console.log("User removed the image. Indicating image removal.");
+          formData.append("image", "");
         }
-
-        formData.append("image", imageFile);
-      } else if (!imageUri && originalImage) {
-        console.log("No new image selected. Indicating image removal.");
-        formData.append("image", "");
+      } else {
+        console.log("Image not changed. Skipping image upload.");
       }
 
       console.log("Form data prepared:", formData);
