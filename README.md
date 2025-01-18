@@ -11,14 +11,13 @@ A full-stack application built for seamless cafe ordering experiences. This app 
 ### User Features
 - Browse menu items with detailed descriptions.
 - Add/remove items to/from the cart.
-- Place orders and track order status in real-time.
+- Place orders and track order status.
 - Save favorite menu items for quick reordering.
 - Reset password functionality with email verification.
 
 ### Admin Features
 - Manage menu items (add, edit, delete).
 - View and process orders.
-- Generate reports on sales and customer activity.
 
 ---
 
@@ -26,8 +25,8 @@ A full-stack application built for seamless cafe ordering experiences. This app 
 
 ### Frontend:
 - **Framework:** React Native
-- **Styling:** Tailwind CSS (or other CSS frameworks as applicable)
-- **State Management:** Redux / Context API
+- **Styling:** Nativewind (Tailwind)
+- **State Management:** Context API
 
 ### Backend:
 - **Framework:** Express.js
