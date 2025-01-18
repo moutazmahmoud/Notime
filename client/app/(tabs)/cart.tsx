@@ -11,6 +11,7 @@ import BackButton from "@/components/Button";
 import { useRouter } from "expo-router";
 import { createNewOrder } from "@/services/ordersService";
 import { handleNotification } from "@/lib/utils";
+import TopSpacer from "@/components/TopSpacer";
 
 const CartPage: React.FC = () => {
   const {
@@ -20,6 +21,8 @@ const CartPage: React.FC = () => {
     clearCart,
     token,
     userId,
+    myOrders,
+    setUser,
   } = useUser();
   const router = useRouter();
 
@@ -79,6 +82,8 @@ const CartPage: React.FC = () => {
         orderDate: new Date(),
       });
       if (newOrder) {
+        console.log("newOrder", newOrder);
+        setUser({ myOrders: [...(myOrders ?? []), newOrder] });
         handleNotification("success", "Your order has been placed!");
         clearCart();
       }
@@ -88,7 +93,8 @@ const CartPage: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-background px-1">
+      <TopSpacer />
       <BackButton onPress={() => router.back()} />
       <Text style={styles.title}>Your Cart</Text>
       {localCart.length === 0 ? (
@@ -103,11 +109,12 @@ const CartPage: React.FC = () => {
             keyExtractor={(item) => item._id}
           />
           <Text style={styles.totalPrice}>Total: ${totalPrice.toFixed(2)}</Text>
-          <TouchableOpacity onPress={handleOrder} style={styles.orderButton}>
+          <TouchableOpacity
+            onPress={handleOrder}
+            style={styles.orderButton}
+            className="bg-primary-10"
+          >
             <Text style={styles.orderButtonText}>Place Order</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={clearCart} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>Clear Cart</Text>
           </TouchableOpacity>
         </>
       )}
@@ -118,8 +125,7 @@ const CartPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
+    paddingBottom: 100,
   },
   title: {
     fontSize: 24,
@@ -136,7 +142,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 16,
     borderRadius: 8,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#fff",
+    marginTop: 8,
   },
   itemName: {
     fontSize: 18,
@@ -153,14 +160,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   actionButton: {
-    padding: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#ddd",
-    borderRadius: 4,
-    marginHorizontal: 4,
+    borderRadius: 100,
+    width: 24,
+    height: 24,
   },
   quantity: {
     fontSize: 16,
     fontWeight: "bold",
+    marginHorizontal: 4,
   },
   removeButton: {
     marginLeft: "auto",

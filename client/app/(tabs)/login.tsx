@@ -13,6 +13,7 @@ import LabeledTextInput from "@/components/LabeledTextInput";
 import { handleNotification, isValidEmail } from "@/lib/utils";
 import { useUser } from "../../context/UserContext"; // Use custom hook for user context
 import Toast from "react-native-toast-message";
+import TopSpacer from "@/components/TopSpacer";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -62,8 +63,9 @@ const Login = () => {
   };
 
   return (
-    <View className="bg-white flex-1 flex-col p-1">
-      <Text className="text-2xl text-center mt-2 font-bold">Login</Text>
+    <View className="bg-white flex-1 flex-col p-1 pt-0">
+      <TopSpacer />
+      <Text className="text-2xl text-center font-bold">Login</Text>
       <View className="flex-col mt-2 items-center justify-center">
         <LabeledTextInput
           label="Email"

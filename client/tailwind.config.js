@@ -67,6 +67,8 @@ module.exports = {
         dropShadowLight: "drop-shadow(0 1px 1px rgb(0 0 0 / 1))",
       },
       spacing: spacingValues,
+      width: spacingValues,
+      height: spacingValues,
       colors: {
         textPrimary: "#1a1a1a",
         textSecondary: " rgb(162, 162, 162)",

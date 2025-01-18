@@ -12,8 +12,13 @@ import { register } from "../../services/authService";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
-import { handleNotification, isValidEmail, isValidPhoneNumber } from "@/lib/utils";
+import {
+  handleNotification,
+  isValidEmail,
+  isValidPhoneNumber,
+} from "@/lib/utils";
 import Toast from "react-native-toast-message";
+import TopSpacer from "@/components/TopSpacer";
 
 const Register = () => {
   const [username, setName] = useState("");
@@ -23,8 +28,6 @@ const Register = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation(); // Get the navigation object
-
-
 
   const handleRegister = async () => {
     // Check if any field is empty
@@ -57,7 +60,7 @@ const Register = () => {
         "Please enter a valid phone number (10-15 digits)."
       );
       handleNotification("error", "Invalid Phone Number");
-      
+
       return;
     }
 
@@ -70,22 +73,18 @@ const Register = () => {
         "success",
         "Your account has been successfully created. Start exploring now!"
       );
-      
-      router.replace("/login");
 
-      
-      
-      
+      router.replace("/login");
     } catch (error) {
       Alert.alert("Error", "Something went wrong");
-      
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View className="bg-white flex-1 flex-col p-1">
+    <View className="bg-background flex-1 flex-col p-1 pt-0">
+      <TopSpacer />
       <Text className="text-2xl text-center mt-2 text-bold">Signup</Text>
       <ScrollView>
         <View className="flex-col mt-2 items-center justify-center">

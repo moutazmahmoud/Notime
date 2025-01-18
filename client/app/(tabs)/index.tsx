@@ -10,9 +10,11 @@ import { getMenuItems } from "@/services/menuItemsService";
 import DrinksByCategoryView from "@/components/DrinksByCategoryView";
 import { AntDesign } from "@expo/vector-icons";
 import { MenuItem } from "./menu";
+import TopSpacer from "@/components/TopSpacer";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function HomeScreen() {
-  const { username, systemAvatar, menuItems, setUser, token, cart } = useUser(); // Access username and systemAvatar using the hook
+  const { username, systemAvatar, menuItems, setUser, token, cart , likedMenuItems} = useUser(); // Access username and systemAvatar using the hook
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
@@ -62,23 +64,22 @@ export default function HomeScreen() {
   // If loading, show a loading message
   if (loading) {
     return (
-      <View className="">
-        <Text className="">Loading...</Text>
-      </View>
+      <LoadingScreen />
     );
   }
 
   return (
-    <ScrollView className="pb-5 bg-primary-35">
-      <View className="flex-1  dark:bg-black inset-0 bg-blue px-1 flex-col pt-2">
+    <ScrollView className="pb-5 bg-background">
+      <TopSpacer />
+      <View className="flex-1  dark:bg-black inset-0 bg-blue px-1 flex-col">
         {/* Header */}
-        <View className="items-center space-between flex-row w-full justify-between mt-2">
+        <View className="items-center space-between flex-row w-full justify-between">
           <Text className="text-xl font-bold text-dark dark:text-white">
             Hi, {username || "Guest"} {/* Display the username */}
           </Text>
           {/* Avatar */}
           <View className="flex-row items-center">
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => router.push("/cart")}
               className="mr-1"
               style={{ marginRight: 16 }}
@@ -95,7 +96,7 @@ export default function HomeScreen() {
                   <View className="absolute -top-2 -right-2 bg-gray-300 rounded-full px-2 py-1 opacity-0" />
                 )}
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity onPress={() => router.push("/profile")}>
               <Image

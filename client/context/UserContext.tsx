@@ -9,11 +9,22 @@ export interface CartItem extends MenuItem {
   quantity: number;
 }
 
+export interface Order {
+  _id: string;
+  status: string;
+  totalPrice: number;
+  items: { item: string; quantity: number }[];
+  customerNotes?: string;
+  customerId: string;
+  orderDate: Date;
+}
+
 export interface UserContextType {
   username?: string;
   userEmail?: string;
   systemAvatar?: AvatarKey;
   menuItems?: MenuItem[];
+  myOrders?: Order[];
   likedMenuItems?: string[];
   token?: string;
   role?: string;
@@ -24,6 +35,7 @@ export interface UserContextType {
   removeFromCart: (id: string) => void;
   updateCartItemQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  restoreToken: () => void;
   updateLikedMenuItems: (newLikedItems: string[]) => void;
   logout: () => void;
 }
@@ -41,6 +53,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     userEmail: "",
     userId: "",
     menuItems: [],
+    myOrders: [],
     likedMenuItems: [],
     cart: [],
   });
@@ -73,9 +86,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   };
 
+  const restoreToken = async () => {
+    const restoredToken = await AsyncStorage.getItem("token");
+    if (restoredToken) {
+      setUser((prevUser) => ({ ...prevUser, token: restoredToken }));
+    }
+  };
   const addToCart = (item: MenuItem, quantity: number = 1) => {
     setUser((prevUser: Partial<UserContextType>) => {
-    
       const cart = prevUser.cart || [];
       const existingItem = cart.find((cartItem) => cartItem._id === item._id);
 
@@ -110,7 +128,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const clearCart = () => {
     setUser((prevUser) => ({ ...prevUser, cart: [] }));
-
   };
 
   const logout = async () => {
@@ -122,6 +139,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       role: "",
       userEmail: "",
       userId: "",
+      myOrders: [],
       menuItems: [],
       likedMenuItems: [],
       cart: [],
@@ -147,6 +165,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         removeFromCart,
         updateCartItemQuantity,
         updateLikedMenuItems,
+        restoreToken,
+    
         clearCart,
         logout,
       }}

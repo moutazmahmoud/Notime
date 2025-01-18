@@ -16,6 +16,9 @@ import { MenuItem } from "../(tabs)/menu";
 import { API_URL_Image, useUser } from "@/context/UserContext";
 import { toggleLikedMenuItem } from "@/services/authService";
 import Toast from "react-native-toast-message";
+import LoadingScreen from "@/components/LoadingScreen";
+import TopSpacer from "@/components/TopSpacer";
+import BackButton from "@/components/Button";
 
 const MenuItemDetailsPage: React.FC = () => {
   const router = useRouter();
@@ -44,10 +47,7 @@ const MenuItemDetailsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#000" />
-        <Text>Loading...</Text>
-      </View>
+      <LoadingScreen />
     );
   }
 
@@ -59,21 +59,19 @@ const MenuItemDetailsPage: React.FC = () => {
     );
   }
 
-
   const handleNotification = () => {
     Toast.show({
-      type: 'success',
-      text1: 'Processing...',
-      text2: 'We are working on it.',
+      type: "success",
+      text1: "Processing...",
+      text2: "We are working on it.",
       autoHide: false, // Manually control dismissal
     });
-  
+
     // Dismiss the notification after some process completes
     setTimeout(() => {
       Toast.hide();
     }, 5000); // Hide after 5 seconds
   };
-  
 
   let isLikedItem: boolean = likedMenuItems?.includes(id) || false;
 
@@ -85,39 +83,33 @@ const MenuItemDetailsPage: React.FC = () => {
         id
       );
       updateLikedMenuItems(newLikedMenuItems);
-      handleNotification();
     } catch (error) {
       console.error("Error toggling liked menu item:", error);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-background px-1">
+      <TopSpacer />
       {/* Back Button */}
-      <View className="flex-row justify-between items-center mt-2">
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <AntDesign name="left" size={20} color="#fff" />
-        </TouchableOpacity>
+      <View className="flex-row justify-between items-center mb-1">
+        <BackButton onPress={() => router.back()} />
 
         <Text style={styles.title}>Details</Text>
         <TouchableOpacity
           onPress={handleLikeMenuItem}
-          style={styles.backButton}
         >
           <Ionicons
             name={isLikedItem ? "heart-sharp" : "heart-outline"}
-            size={20}
-            color="#fff"
+            size={24}
+            color="#000"
           />
           {/* Replace with your favorite icon */}
         </TouchableOpacity>
       </View>
 
       {/* Image Section */}
-      <View className=" px-1">
+      <View className="">
         <Image
           source={{ uri: `${API_URL_Image}${menuItem?.image}` }} // Replace with your API URL
           style={styles.image}
@@ -140,8 +132,8 @@ const MenuItemDetailsPage: React.FC = () => {
             // Replace this with your add-to-cart logic
             Alert.alert("Added to cart", `${menuItem?.name} added to cart.`);
             Toast.show({
-              type: 'success',
-              text1: 'Added to cart',
+              type: "success",
+              text1: "Added to cart",
               text2: `${menuItem?.name} added to cart.`,
               autoHide: true, // Manually control dismissal
             });
@@ -157,7 +149,6 @@ const MenuItemDetailsPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   backButton: {
     backgroundColor: "#6200EE",
@@ -174,7 +165,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   detailsContainer: {
-    padding: 20,
+    paddingVertical: 20,
+    flex: 1,
   },
   title: {
     fontSize: 24,

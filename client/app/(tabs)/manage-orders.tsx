@@ -12,6 +12,8 @@ import { getAllOrders, updateOrderStatus } from "@/services/ordersService";
 import { getAllUsers } from "@/services/authService";
 import { getMenuItems } from "@/services/menuItemsService";
 import { MenuItem } from "./menu";
+import TopSpacer from "@/components/TopSpacer";
+import LoadingScreen from "@/components/LoadingScreen";
 
 type Order = {
   _id: string;
@@ -87,7 +89,6 @@ const ManageOrdersScreen: React.FC = () => {
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
-     
       const updatedOrder = await updateOrderStatus(
         token as string,
         orderId,
@@ -194,9 +195,7 @@ const ManageOrdersScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading orders...</Text>
-      </View>
+      <LoadingScreen />
     );
   }
 
@@ -211,7 +210,8 @@ const ManageOrdersScreen: React.FC = () => {
   const filteredOrders = filterOrders(viewType);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-background">
+      <TopSpacer />
       <Text style={styles.header}>Manage Orders</Text>
       <View style={styles.sliderBar}>
         <TouchableOpacity
@@ -254,8 +254,7 @@ const ManageOrdersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
-    padding: 20,
+    paddingHorizontal: 16,
   },
   header: {
     fontSize: 24,

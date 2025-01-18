@@ -38,13 +38,14 @@ export default function BackButton({ onPress }: { onPress: () => void }) {
   return (
     <Pressable
       style={{
-        borderRadius: 25,
-        marginBottom: 10,
+        borderRadius: 8,
+        width: 40,
+        height: 40,
       }}
-      className="w-3 h-3 bg-primary-10 flex items-center justify-center"
+      className="w-2 flex items-center justify-center"
       onPress={onPress}
     >
-      <AntDesign name="left" size={20} color="#fff" />
+      <AntDesign name="left" size={24} color="#000" />
     </Pressable>
   );
 }

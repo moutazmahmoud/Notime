@@ -19,6 +19,8 @@ import {
 import { useRouter, useGlobalSearchParams } from "expo-router";
 import { API_URL_Image } from "@/context/UserContext";
 import BackButton from "@/components/Button";
+import TopSpacer from "@/components/TopSpacer";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const EditMenuItemPage: React.FC = () => {
   const router = useRouter();
@@ -157,10 +159,7 @@ const EditMenuItemPage: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#000" />
-        <Text>Loading...</Text>
-      </View>
+      <LoadingScreen />
     );
   }
 
@@ -173,7 +172,8 @@ const EditMenuItemPage: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-background">
+      <TopSpacer />
       <BackButton onPress={() => router.back()} />
       <Text style={styles.title}>Edit Menu Item</Text>
       <ScrollView>
@@ -280,8 +280,7 @@ const EditMenuItemPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
+    paddingHorizontal: 16,
   },
   title: {
     fontSize: 24,

@@ -18,6 +18,7 @@ import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import BackButton from "@/components/Button";
 import { handleNotification } from "@/lib/utils";
+import TopSpacer from "@/components/TopSpacer";
 
 const AddMenuItemPage: React.FC = () => {
   const [name, setName] = useState("");
@@ -115,6 +116,7 @@ const AddMenuItemPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <TopSpacer />
       <ScrollView>
         <BackButton onPress={() => router.back()} />
         <Text style={styles.title} className="mt-2">
@@ -180,7 +182,7 @@ const AddMenuItemPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
   title: {

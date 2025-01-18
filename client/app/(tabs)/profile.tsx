@@ -15,6 +15,8 @@ import { useRouter } from "expo-router";
 import { useUser } from "../../context/UserContext";
 import { editUser, deleteUser } from "@/services/authService";
 import { AntDesign } from "@expo/vector-icons";
+import BackButton from "@/components/Button";
+import TopSpacer from "@/components/TopSpacer";
 
 const avatarKeys: AvatarKey[] = [
   "10",
@@ -115,18 +117,25 @@ const ProfileScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-background">
+      <TopSpacer />
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>
-          <AntDesign name="left" size={20} color="#fff" />
-        </Text>
-      </TouchableOpacity>
+      <BackButton
+        onPress={() => {
+          router.back();
+          setIsEditing(false);
+        }}
+      />
 
       {/* User Avatar */}
-      <TouchableOpacity onPress={() => setAvatarModalVisible(true)}>
-        <Image source={getImageForValue(systemAvatar)} style={styles.avatar} />
-      </TouchableOpacity>
+      <View className="flex-row items-center justify-center mt-1">
+        <TouchableOpacity onPress={() => setAvatarModalVisible(true)}>
+          <Image
+            source={getImageForValue(systemAvatar!)}
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/* User Details */}
       {isEditing ? (
@@ -231,10 +240,7 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f9f9f9",
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   backButton: {
     position: "absolute",

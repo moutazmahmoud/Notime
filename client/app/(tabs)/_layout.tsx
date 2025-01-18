@@ -42,11 +42,14 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
-  const { role, token } = useUser(); // Access username and systemAvatar using the hook
+  const { role, token, cart } = useUser(); // Access username and systemAvatar using the hook
   const isAuthenticated = token || false;
   const [ready, setReady] = useState(false);
   const router = useRouter(); // To programmatically navigate
   const [isMounted, setIsMounted] = useState(false);
+
+  const cartLength: number =
+    cart?.map((item) => item.quantity).reduce((a, b) => a + b, 0) || 0;
 
   // Wait for the layout to fully mount before checking authentication
   useEffect(() => {
@@ -194,10 +197,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="cart"
         options={{
-          tabBarStyle: { display: "none" },
-
           title: "",
-          href: null,
+          tabBarIcon: ({ color }) => (
+            <View className="relative">
+              <AntDesign name="shoppingcart" size={20} color={color} />
+              {cartLength > 0 ? (
+                <View className="absolute -top-0.5 -right-0.5 bg-red-500 rounded-full w-1 h-1 flex items-center justify-center">
+                  <Text className="text-white text-xs font-bold">
+                    {cartLength}
+                  </Text>
+                </View>
+              ) : (
+                <View className="absolute -top-2 -right-2 bg-gray-300 rounded-full px-2 py-1 opacity-0" />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen

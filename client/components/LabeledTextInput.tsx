@@ -35,10 +35,10 @@ const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
   return (
     <View className={"w-full " + styleClasses}>
       <View className="flex-row justify-between w-full align-center">
-        <Text className="text-primary-10">{label}</Text>
+        <Text >{label}</Text>
         {isShowingForgotPassword && (
           <TouchableOpacity onPress={() => router.push("/forgot-password")}>
-            <Text>Forgot password?</Text>
+            <Text className="text-primary-10">Forgot password?</Text>
           </TouchableOpacity>
         )}
       </View>

@@ -16,6 +16,9 @@ import {
 } from "../../services/menuItemsService";
 import { API_URL_Image, useUser } from "@/context/UserContext";
 import { useRouter } from "expo-router";
+import TopSpacer from "@/components/TopSpacer";
+import LoadingScreen from "@/components/LoadingScreen";
+import { handleNotification } from "@/lib/utils";
 
 export interface MenuItem {
   _id: string;
@@ -35,17 +38,17 @@ const MenuPage: React.FC = () => {
 
   // Fetch menu items on component mount
   useEffect(() => {
-  const fetchMenuItems = async () => {
-    try {
-      const items = await getMenuItems(token || "");
-      setMenuItems(items);
-    } catch (err) {
-      setError("Failed to fetch menu items.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchMenuItems();
+    const fetchMenuItems = async () => {
+      try {
+        const items = await getMenuItems(token || "");
+        setMenuItems(items);
+      } catch (err) {
+        setError("Failed to fetch menu items.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMenuItems();
   }, []);
 
   // Handle edit operation (navigate to edit page)
@@ -97,15 +100,12 @@ const MenuPage: React.FC = () => {
 
   // If loading, show a loading message
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Loading...</Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   // If error, show an error message
   if (error) {
+    handleNotification("error", error);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{error}</Text>
@@ -115,6 +115,7 @@ const MenuPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <TopSpacer />
       <ScrollView>
         <Text style={styles.title}>Menu</Text>
         <TouchableOpacity
@@ -124,7 +125,10 @@ const MenuPage: React.FC = () => {
           ]}
           onPress={() => router.push("/add-menu-item")}
         >
-          <Text style={styles.actionText} className="text-center"> Add Menu Item</Text>
+          <Text style={styles.actionText} className="text-center">
+            {" "}
+            Add Menu Item
+          </Text>
         </TouchableOpacity>
         <FlatList
           data={menuItems}
@@ -139,9 +143,8 @@ const MenuPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
     paddingBottom: 100,
-    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,

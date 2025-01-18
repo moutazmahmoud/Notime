@@ -18,6 +18,8 @@ import { router } from "expo-router";
 import LabeledTextInput from "@/components/LabeledTextInput";
 import { handleNotification, isValidEmail } from "@/lib/utils";
 import { AntDesign } from "@expo/vector-icons";
+import BackButton from "@/components/Button";
+import TopSpacer from "@/components/TopSpacer";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -99,9 +101,8 @@ const ForgotPassword = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <AntDesign name="left" size={20} color="#fff" />
-      </TouchableOpacity>
+      <TopSpacer />
+      <BackButton onPress={() => router.back()} />
 
       <Text style={styles.title}>Forgot Password</Text>
       <Text style={styles.subtitle}>
@@ -205,7 +206,7 @@ const ForgotPassword = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
     backgroundColor: "white",
   },
   backButton: {

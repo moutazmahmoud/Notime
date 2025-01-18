@@ -11,6 +11,8 @@ import { getOrdersByUser } from "@/services/ordersService";
 import { getMenuItems } from "@/services/menuItemsService";
 import CountdownTimer from "@/components/CountdownTimer";
 import { MenuItem } from "./menu";
+import TopSpacer from "@/components/TopSpacer";
+import LoadingScreen from "@/components/LoadingScreen";
 
 interface Order {
   _id: string;
@@ -31,6 +33,7 @@ const MyOrdersScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<string>("incoming");
+  const { myOrders, setUser } = useUser();
 
   const { token, userId } = useUser();
 
@@ -43,7 +46,8 @@ const MyOrdersScreen: React.FC = () => {
           getOrdersByUser(token as string, userId as string),
           getMenuItems(token as string),
         ]);
-        setOrders(ordersData);
+        setOrders(myOrders);
+        setUser({ myOrders: ordersData });
         setMenuItems(menuData);
       } catch (err) {
         setError(
@@ -156,9 +160,7 @@ const MyOrdersScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading orders...</Text>
-      </View>
+      <LoadingScreen />
     );
   }
 
@@ -173,7 +175,8 @@ const MyOrdersScreen: React.FC = () => {
   const filteredOrders = filterOrders(viewType);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-background">
+      <TopSpacer />
       <Text style={styles.header}>My Orders</Text>
       <View style={styles.sliderBar}>
         <TouchableOpacity
@@ -223,8 +226,7 @@ const MyOrdersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
-    padding: 20,
+    paddingHorizontal: 16,
   },
   header: {
     fontSize: 24,
@@ -254,12 +256,13 @@ const styles = StyleSheet.create({
   orderItem: {
     backgroundColor: "#fff",
     padding: 15,
-    marginBottom: 10,
+    marginVertical: 10,
     borderRadius: 8,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
+    
   },
   orderText: {
     fontSize: 16,
